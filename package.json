@@ -9,10 +9,17 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check"
   },
   "dependencies": {
+    "@fontsource-variable/playfair-display": "^5.3.0",
+    "@fontsource/old-standard-tt": "^5.3.0",
     "astro": "^7.3.8",
     "bootstrap-icons": "^1.13.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
   }
 }
