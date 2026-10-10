@@ -2,6 +2,8 @@
 // (src/assets/CHRISTINE GUARDA PORTFOLIO/HOME.jpg); the resume entries from the design-system previews.
 // PLACEHOLDER: the social profile URLs, resume link, summary, bio, skills and "The rest of me" are still dummy text.
 
+export const tagline = 'Writer | Communications and Media Creative';
+
 export const emails = [
   { label: 'School email', address: 'christineirishjoy.guarda@ust-legazpi.edu.ph', note: 'School' },
   { label: 'Personal email', address: 'christineirishjoyguarda@gmail.com', note: 'Personal' },

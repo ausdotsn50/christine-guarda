@@ -1,11 +1,40 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Laid out after the Canva home page (src/assets/CHRISTINE GUARDA PORTFOLIO/HOME.jpg).
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+import { tagline } from '../data/profile';
+// JOY_PHOTO.JPG with the background removed on-device (Apple Vision), wall fringe cleaned, trimmed to the subject.
+import portrait from '../assets/christine/portrait.png';
 ---
+<Base description="The portfolio of Christine Guarda, writer and communications and media creative, AB Communication at UST–Legazpi.">
+  <section class="hero">
+    <div class="hero-text">
+      <p class="dek hero-welcome">Welcome to my portfolio!</p>
+      <h1 class="name-plate hero-name">Christine<br />Guarda</h1>
+      <p class="entry-title hero-tagline">{tagline}</p>
+    </div>
+    <ArchFrame>
+      <Image src={portrait} alt="Christine Guarda" widths={[280, 370, 560, 740]} sizes="(max-width: 900px) 280px, 370px" loading="eager" fetchpriority="high" />
+    </ArchFrame>
+  </section>
+</Base>
 
-<Layout>
-	<Welcome />
-</Layout>
+<style>
+  /* Hero: the welcome line, name and tagline centred beside the arch. */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); align-items: center; gap: var(--space-8); padding-bottom: var(--space-12); }
+  .hero-text { container-type: inline-size; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; }
+  .hero-welcome { margin: 0; font-size: clamp(20px, 4.4cqi, 32px); line-height: 1.25; }
+  /* Canva sets the name lighter than the name-plate's 900; it shrinks with its column so "CHRISTINE" fits. */
+  .hero-name { margin: 0; font-size: clamp(44px, 17cqi, 124px); font-weight: 600; line-height: 0.86; text-transform: uppercase; color: var(--press-blue); }
+  .hero-tagline { margin: 0; font-size: clamp(18px, 4.4cqi, 32px); line-height: 1.25; }
+  /* A taller arch than the default 5:6, with the portrait filling its height so the head rises above it. */
+  .hero > :global(.cg-arch) { max-width: 420px; aspect-ratio: 3 / 4; }
+  .hero :global(.cg-arch-field) { top: 8%; }
+  .hero :global(.cg-arch-img img) { width: auto; height: 100%; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .hero > :global(.cg-arch) { justify-self: center; max-width: 320px; }
+  }
+</style>
