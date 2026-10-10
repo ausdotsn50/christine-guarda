@@ -17,3 +17,53 @@
 /* 28px is large text, so the active link can be press-blue, as in Canva; the underline stays. */
 .cg-mast-link.is-active { color: var(--press-blue); text-underline-offset: 8px; }
 .cg-mast-monogram { width: 60px; height: 60px; }
+
+/* ---------- ContactFooter ---------- */
+.cg-foot-title { font-size: 48px; line-height: 50px; }
+.cg-foot-col .cg-kicker { margin-bottom: var(--space-4); font-family: var(--font-text); font-size: 20px; line-height: 24px; letter-spacing: .04em; }
+.cg-foot-contact { line-height: 20px; }
+.cg-foot-contact li { display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: var(--space-3); }
+.cg-foot-contact li.has-icon:not(:first-child) { margin-top: var(--space-4); }
+.cg-foot-contact a { overflow-wrap: anywhere; }
+.cg-foot-icon { display: block; color: var(--press-blue-deep); }
+.cg-foot-icon svg { display: block; width: 100%; height: auto; }
+.cg-foot-contact .cg-foot-icon { padding-top: 1px; }
+.cg-foot-social { gap: var(--space-4); }
+.cg-foot-social a { display: block; }
+.cg-foot-social .cg-foot-icon { width: 34px; }
+.cg-foot-col:last-child .cg-foot-list { font-size: 20px; line-height: 36px; }
+
+/* Footer layout. Children: 1 title, 2 Contact, 3 Find me, 4 Navigate. An email line with its icon needs
+   about 322px, so the columns regroup before Contact gets narrower than that:
+   - 1296px and up (the content at its full 1200px): the four columns, as in Canva and the design system,
+     with the title on two lines.
+   - 896–1295px: the title on its own row, then Contact | Find me | Navigate with rules between.
+   - 641–895px: the four columns as a 2×2, title | Contact over Find me | Navigate, ruled like a cross.
+   - 640px and under: the title, then Contact across the full width, then Find me | Navigate.
+   These replace the design system's 860px two-column fallback, which halved Contact. */
+@media (max-width: 1295px) {
+  .cg-foot-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); row-gap: var(--space-6); }
+  .cg-foot-title { grid-column: 1 / -1; }
+  .cg-foot-grid > .cg-foot-col:nth-child(2) { border-left: 0; }
+  .cg-foot-grid > .cg-foot-col + .cg-foot-col { border-left: var(--stroke) solid var(--rule); }
+}
+/* The right column is twice the left so an email line fits; the content runs to the rules' outer edges. */
+@media (max-width: 895px) {
+  .cg-foot-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); row-gap: 0; }
+  .cg-foot-title { grid-column: auto; font-size: 40px; line-height: 44px; }
+  .cg-foot-grid > :nth-child(odd) { padding-left: 0; }
+  .cg-foot-grid > :nth-child(even) { padding-right: 0; }
+  .cg-foot-grid > :nth-child(-n+2) { padding-bottom: var(--space-6); }
+  .cg-foot-grid > :nth-child(n+3) { padding-top: var(--space-6); border-top: var(--stroke) solid var(--rule); }
+  .cg-foot-grid > .cg-foot-col:nth-child(2) { border-left: var(--stroke) solid var(--rule); }
+  .cg-foot-grid > .cg-foot-col:nth-child(3) { border-left: 0; }
+}
+/* Phones: a half-width Contact can't hold an email line, so Contact takes the full width under the title,
+   and Find me | Navigate stay side by side under the rule. */
+@media (max-width: 640px) {
+  .cg-foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cg-foot-title { grid-column: 1 / -1; }
+  .cg-foot-grid > .cg-foot-col:nth-child(2) { grid-column: 1 / -1; padding-left: 0; border-left: 0; }
+  .cg-foot-grid > .cg-foot-col:nth-child(3) { padding-right: var(--space-4); }
+  .cg-foot-grid > .cg-foot-col:nth-child(4) { padding-left: var(--space-6); }
+}

@@ -8,8 +8,9 @@ import type { ImageMetadata } from 'astro';
 import { getImage, Image } from 'astro:assets';
 import logo from '../assets/logos/cg-blue.png';
 import Masthead from '../components/Masthead.astro';
+import ContactFooter from '../components/ContactFooter.astro';
 import SiteMenu from '../components/site/SiteMenu.astro';
-import { siteName, dateline, nav, navSection, menuLinks } from '../data/site';
+import { siteName, dateline, nav, navSection, contacts, social, footerNav, menuLinks } from '../data/site';
 
 interface Props {
   /** The page name; the document title becomes "{title} · Christine Guarda". Leave out on the front page. */
@@ -21,6 +22,7 @@ interface Props {
   /** Leave out the Masthead and ContactFooter (the styleguide renders them as specimens). */
   bare?: boolean;
 }
+// Slot "next": Return / Next ArrowLinks, set between rules just above the footer.
 
 const { title, description, image, noindex = false, bare = false } = Astro.props;
 
@@ -63,6 +65,8 @@ const ogImage = site && image ? new URL((await getImage({ src: image, width: 120
       <main id="main" class="site-main">
         <slot />
       </main>
+      {Astro.slots.has('next') && <div class="site-next"><slot name="next" /></div>}
+      {!bare && <ContactFooter contacts={contacts} social={social} nav={footerNav} />}
     </div>
   </body>
 </html>

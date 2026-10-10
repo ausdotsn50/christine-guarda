@@ -1,0 +1,57 @@
+---
+import type { FooterItem } from './types';
+
+interface Props {
+  /** Default "Let’s get in touch!" */
+  title?: string;
+  contacts?: FooterItem[];
+  social?: FooterItem[];
+  nav?: FooterItem[];
+  legal?: string;
+  class?: string;
+}
+
+const { title, contacts = [], social = [], nav = [], legal, class: className } = Astro.props;
+// Optional glyphs (FooterItem.icon). Without them the markup is exactly bundle.js's.
+const contactIcons = contacts.some((c) => c.icon);
+---
+<footer class:list={['cg-foot', className]}>
+  <div class="cg-foot-grid">
+    <p class="cg-foot-title">{title || 'Let’s get in touch!'}</p>
+    <div class="cg-foot-col">
+      <p class="cg-kicker">Contact</p>
+      {contactIcons ? (
+        <ul class="cg-foot-list cg-foot-contact">
+          {contacts.map((c) => (
+            <li class:list={[c.icon && 'has-icon']}><span class="cg-foot-icon" aria-hidden="true">{c.icon && <Fragment set:html={c.icon} />}</span><span>{c.href ? <a href={c.href}>{c.label}</a> : c.label}{c.note && <span class="cg-foot-note">{` (${c.note})`}</span>}</span></li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="cg-foot-list">
+          {contacts.map((c) => (
+            <li>{c.href ? <a href={c.href}>{c.label}</a> : c.label}{c.note && <span class="cg-foot-note">{` (${c.note})`}</span>}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+    <div class="cg-foot-col">
+      <p class="cg-kicker">Find me</p>
+      <ul class="cg-foot-social">
+        {social.map((s) => (
+          <li>{s.href ? (
+            s.icon
+              ? <a href={s.href}><span class="cg-foot-icon" aria-hidden="true"><Fragment set:html={s.icon} /></span><span class="cg-sr">{s.label}</span></a>
+              : <a href={s.href}>{s.label}</a>
+          ) : s.label}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="cg-foot-col">
+      <p class="cg-kicker">Navigate</p>
+      <ul class="cg-foot-list">
+        {nav.map((n) => <li>{n.href ? <a href={n.href}>{n.label}</a> : n.label}</li>)}
+      </ul>
+    </div>
+  </div>
+  <p class="cg-foot-legal">{legal || '© ausdotsn50 | All rights reserved.'}</p>
+</footer>

@@ -1,5 +1,9 @@
 /* Site layout around the cg-* components. Tokens only. */
 
+/* Return / Next between two rules; the lower rule is the footer's own top rule. */
+.site-next { display: flex; justify-content: flex-end; padding: var(--space-6) 0; border-top: var(--stroke-heavy) solid var(--rule); }
+.site-next + .cg-foot { padding-top: 0; }
+
 .skip-link { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 1; padding: var(--space-2) var(--space-4); background: var(--paper); color: var(--press-blue-deep); font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transform: translateY(-200%); }
 .skip-link:focus-visible { transform: none; }
 
