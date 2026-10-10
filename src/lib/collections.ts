@@ -12,4 +12,9 @@ export async function getWorks(category?: CategorySlug): Promise<Work[]> {
   return sortWorks(await getCollection('works', (w) => !category || w.data.category === category));
 }
 
+/** "1 work", "3 works". */
+export function countLabel(n: number, noun: string, plural = `${noun}s`): string {
+  return `${n} ${n === 1 ? noun : plural}`;
+}
+
 export const workHref = (w: Work) => `/works/${w.data.category}#${w.id}`;

@@ -1,12 +1,14 @@
 import type { FooterItem } from '../components/types';
 import { emails, phone, socials } from './profile';
 import { categories } from './categories';
-// Footer glyphs from Bootstrap Icons (MIT), drawn in currentColor.
-import envelopeIcon from 'bootstrap-icons/icons/envelope-fill.svg?raw';
-import phoneIcon from 'bootstrap-icons/icons/telephone-fill.svg?raw';
-import facebookIcon from 'bootstrap-icons/icons/facebook.svg?raw';
-import instagramIcon from 'bootstrap-icons/icons/instagram.svg?raw';
-import linkedinIcon from 'bootstrap-icons/icons/linkedin.svg?raw';
+// Footer glyphs from Ionicons, drawn in currentColor and sized by the footer's CSS.
+import { icon } from '../lib/icons';
+
+const envelopeIcon = icon('mail');
+const phoneIcon = icon('call');
+const facebookIcon = icon('logoFacebook');
+const instagramIcon = icon('logoInstagram');
+const linkedinIcon = icon('logoLinkedin');
 
 export const siteName = 'Christine Guarda';
 

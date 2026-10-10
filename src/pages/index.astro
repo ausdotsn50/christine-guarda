@@ -7,7 +7,7 @@ import SectionHead from '../components/SectionHead.astro';
 import WorkCard from '../components/WorkCard.astro';
 import { getWorks, workHref } from '../lib/collections';
 import { aboutShort, tagline } from '../data/profile';
-import portrait from '../assets/christine/portrait.png';
+import portrait from '../assets/christine/home.png';
 
 const featured = (await getWorks()).filter((w) => w.data.featured).sort((a, b) => a.data.order - b.data.order);
 if (featured.length > 3) {

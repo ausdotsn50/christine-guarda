@@ -1,0 +1,19 @@
+---
+interface Props {
+  /** "Organisation — Role" */
+  title: string;
+  /** Dates in italic, e.g. "A.Y. 2025–2026"; a list sets each item on its own line. */
+  meta?: string | string[];
+  class?: string;
+}
+// Default slot: a one-sentence description.
+
+const { title, meta, class: className } = Astro.props;
+// Rendered up front so a conditionally empty slot leaves out .cg-entry-body.
+const body = Astro.slots.has('default') ? (await Astro.slots.render('default')).trim() : '';
+---
+<div class:list={['cg-entry', className]}>
+  <p class="cg-entry-title">{title}</p>
+  {meta && <p class="cg-entry-meta">{[meta].flat().map((line, i) => <Fragment>{i > 0 && <br />}{line}</Fragment>)}</p>}
+  {body && <div class="cg-entry-body"><Fragment set:html={body} /></div>}
+</div>

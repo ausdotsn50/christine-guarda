@@ -1,0 +1,229 @@
+---
+// The About hero after the Canva About page (src/assets/CHRISTINE GUARDA PORTFOLIO/ABOUT.jpg), set as a news story:
+// beside the photo, the title, dek and the statement's first paragraph as the lede, opening with a script initial;
+// "Continue reading" unfolds the rest of the statement below in two ruled columns, like a jump to the
+// inside pages. The lede alone is about the photo's height. No JavaScript: the fold is a <details>.
+import '@fontsource/rochester/latin-400.css';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Article from '../components/Article.astro';
+import ResumeEntry from '../components/ResumeEntry.astro';
+import ResumeSection from '../components/ResumeSection.astro';
+import SectionHead from '../components/SectionHead.astro';
+import { bio, education, experience, restOfMe, skills, summary } from '../data/profile';
+import { categoryLabel } from '../data/categories';
+import { countLabel, getWorks } from '../lib/collections';
+import portrait from '../assets/christine/about.png';
+import { icon } from '../lib/icons';
+
+const [lede, ...moreBio] = bio;
+const chevron = icon('chevronDownOutline', { size: 20 });
+const arrow = icon('arrowForwardOutline', { size: 16 });
+
+// Each skill group's related categories with their work counts, from the works collection.
+const works = await getWorks();
+const skillGroups = skills.map((s) => ({
+  ...s,
+  related: s.related.map((slug) => ({
+    href: `/works/${slug}`,
+    label: categoryLabel(slug),
+    count: countLabel(works.filter((w) => w.data.category === slug).length, 'work'),
+  })),
+}));
+---
+<Base title="About" description={summary}>
+  <section class="about">
+    <header class="about-head">
+      <h1 class="about-title">About<br />Christine</h1>
+      <p class="about-dek">{summary}</p>
+    </header>
+    <figure class="about-photo">
+      <Image src={portrait} alt="Christine Guarda, laughing and waving" widths={[320, 420, 640, 840]} sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 900px) 260px, 420px" loading="eager" fetchpriority="high" />
+    </figure>
+    <div class="about-lede">
+      <Article><p>{lede}</p></Article>
+    </div>
+    <details class="about-more">
+      <summary>
+        <span class="cg-btn cg-btn-outline about-more-pill"><span class="when-closed">Continue reading</span><span class="when-open">Show less</span><span class="about-more-icon" set:html={chevron} /></span>
+      </summary>
+      <div class="about-more-content">
+        <Article columns={2} dropCap={false}>
+          {moreBio.map((p) => <p>{p}</p>)}
+          {restOfMe.map((p) => <p>{p}</p>)}
+        </Article>
+      </div>
+    </details>
+  </section>
+
+  <section class="resume">
+    <h2 class="cg-sr">Résumé</h2>
+    <ResumeSection heading="Education">
+      {education.map((e) => <ResumeEntry title={e.title} meta={e.meta} />)}
+    </ResumeSection>
+    <ResumeSection heading="Relevant experience">
+      {experience.map((e) => <ResumeEntry title={e.title} meta={e.meta}><p>{e.body}</p></ResumeEntry>)}
+    </ResumeSection>
+  </section>
+
+  <section class="skills">
+    <SectionHead variant="leaders" size="lg">Skills</SectionHead>
+    <ul class="skills-grid">
+      {skillGroups.map((s) => (
+        <li class="skill">
+          <a class="skill-tile" href={s.related[0].href} tabindex="-1" aria-hidden="true" set:html={icon(s.icon)} />
+          <h3 class="skill-name"><a href={s.related[0].href}>{s.head}<span class="cg-sr">: see {s.related[0].label}</span></a></h3>
+          <ul class="skill-items">{s.items.map((item) => <Fragment><li>{item}</li>{' '}</Fragment>)}</ul>
+          <ul class="skill-related" aria-label={`Work showing ${s.head}`}>
+            {s.related.map((r) => (
+              <li><a href={r.href}><span class="skill-cat">{r.label}</span><span class="cg-sr">, </span><span class="skill-count">{r.count}<span class="skill-arrow" set:html={arrow} /></span></a></li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  /* Desktop: photo left; the title, dek and lede right; the unfolding rest below at full width.
+     Tablet: the photo beside the title and dek, the lede full width under both. Phone: stacked, with a wide,
+     short photo crop so the lede starts near the top of the screen. */
+  /* One gap on both sides of every full-width rule from "Continue reading" down to the footer's top rule (below
+     the pill, for the "Continue reading" rule), so the sections keep the same rhythm whatever their content. */
+  :global(.site):has(.about) { --rule-gap: var(--space-8); }
+
+  .about { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-areas: 'photo head' 'photo lede' 'more more'; grid-template-rows: auto 1fr auto; column-gap: var(--space-12); row-gap: var(--space-6); }
+  .about-head { grid-area: head; container-type: inline-size; }
+  .about-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 15cqi, 88px); line-height: 0.92; text-transform: uppercase; color: var(--press-blue); }
+  .about-dek { margin: var(--space-4) 0 0; max-width: var(--measure); font-family: var(--font-text); font-style: italic; font-size: 20px; line-height: 30px; color: var(--press-blue-deep); }
+  /* The cutout on a square-cornered press-blue panel, as in Canva. Her raised hand is cut by the photo's own edge,
+     so the cutout sits against the panel's left edge: the cut lines up with the frame, and the hand reads as
+     reaching out of it rather than ending in mid-air. */
+  /* The panel stretches to the full height of the title, dek and lede beside it, so the two halves balance.
+     The portrait is laid over it (absolutely, so it can't set the height itself) and fills it: scaled to the
+     panel's width, anchored at the top-left with headroom above her, so the head and raised hand always show
+     and any crop falls at the bottom. */
+  .about-photo { grid-area: photo; position: relative; align-self: stretch; width: 100%; max-width: 420px; margin: 0; overflow: hidden; background: var(--press-blue); border-radius: var(--radius-none); }
+  .about-photo :global(img) { position: absolute; inset: 8% 0 0 0; width: 100%; height: 92%; max-width: none; object-fit: cover; object-position: left top; }
+  .about-lede { grid-area: lede; }
+  /* The lede's initial in Rochester, a Victorian letter-writing hand: cursive but nearly upright and narrow,
+     so the paragraph wraps close beside it. Smaller on tablets and phones (below). */
+  .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { margin: 8px var(--space-3) 0 0; font-family: 'Rochester', var(--font-display); font-weight: 400; font-size: 116px; line-height: 92px; color: var(--press-blue); }
+  /* Justified like newspaper copy, hyphenated so the lines don't open gaps; ragged right on phones, where the
+     measure is too short to justify cleanly (below). */
+  .about-lede p, .about-more p { text-align: justify; hyphens: auto; }
+  /* The two columns end level: paragraphs may run on from one column into the next. */
+  .about-more :global(.cg-article.is-two-col > p) { break-inside: auto; }
+
+  /* "Continue reading": an outline pill centred on a heavy rule, like a newspaper jump line, so it reads as a
+     control rather than a divider. The rule runs into it from both sides; the whole row is the toggle, and
+     its hover fill and focus ring show on the pill. */
+  .about-more { grid-area: more; }
+  .about-more > summary { display: flex; align-items: center; gap: var(--space-4); list-style: none; cursor: pointer; }
+  .about-more > summary::before, .about-more > summary::after { content: ''; flex: 1; border-top: var(--stroke-heavy) solid var(--rule); }
+  .about-more > summary::-webkit-details-marker { display: none; }
+  .about-more > summary:focus-visible { box-shadow: none; }
+  .about-more > summary:focus-visible .about-more-pill { box-shadow: var(--focus-ring); }
+  .about-more > summary:hover .about-more-pill { background: var(--press-blue-tint); }
+  .about-more-pill { flex: none; }
+  .about-more[open] .about-more-content { padding-top: var(--rule-gap); }
+  .about-more:not([open]) .when-open, .about-more[open] .when-closed { display: none; }
+  .about-more-icon { display: inline-flex; transition: transform .25s ease; }
+  .about-more[open] .about-more-icon { transform: rotate(180deg); }
+  .about-more-content { animation: about-reveal .4s ease both; }
+  @keyframes about-reveal { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .about-more-content { animation: none; }
+    .about-more-icon { transition: none; }
+  }
+
+  /* The "Continue reading" rule is Education's top line; each résumé row closes with its own heavy rule, the one
+     under Education doubling as Experience's top. Skills starts the same gap below the last one. */
+  .resume { margin-top: 0; }
+  .resume :global(.cg-resume) { padding: var(--rule-gap) 0; border-top: 0; }
+  .skills { margin-top: var(--rule-gap); }
+  /* The footer's top rule closes Skills, at the same gap (instead of the site's space-16 above the footer). */
+  :global(.site):has(.about) > :global(.site-main) { margin-bottom: 0; }
+  :global(.site):has(.about) > :global(.cg-foot) { padding-top: var(--rule-gap); }
+  /* Unfolded, the statement sits between that rule and Education, so Education takes its own top rule. */
+  .about:has(.about-more[open]) + .resume { margin-top: var(--rule-gap); border-top: var(--stroke-heavy) solid var(--rule); }
+
+  /* Beside its entries, each résumé head (and the button under it) sits vertically centred in the row. */
+  /* Its heading is set from the column's width, up to 52px (the component's is 40px), so it fills more of its
+     third of the row and "Experience" still fits on narrow tablets. Stacked on phones, the component's 32px. */
+  @media (min-width: 721px) {
+    .resume :global(.cg-resume-head) { justify-content: center; container-type: inline-size; }
+    .resume :global(.cg-resume-heading) { font-size: clamp(26px, 15.5cqi, 52px); line-height: 1.08; }
+  }
+
+  /* Skills: per group, a press-blue tile with its icon drawn in white (like the WorkCard tiles), the group name,
+     its skills, then small outline links to the Works categories that show them, with their work counts. The
+     tile and the name link to the main category; the tile is for the pointer only (keyboards and screen
+     readers get the name). Desktop: four columns, a skill per line. Tablet and phone (below): the skills run
+     on in one line, separated by commas, so the text stays short. */
+  .skills { display: flex; flex-direction: column; gap: var(--space-6); }
+  .skills-grid, .skill-items, .skill-related { list-style: none; margin: 0; padding: 0; }
+  .skills-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
+  /* Each group's tile, name, list and links share the grid's rows, so the links start level across the row. */
+  .skill { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: var(--space-3); }
+  .skill-tile { display: grid; place-items: center; aspect-ratio: 3 / 2; margin-bottom: var(--space-1); background: var(--press-blue); color: var(--on-blue); }
+  .skill-tile :global(svg) { width: 72px; height: 72px; }
+  .skill-name { margin: 0; }
+  .skill-name a { display: block; padding-bottom: var(--space-2); border-bottom: var(--stroke-heavy) solid var(--rule); font-family: var(--font-text); font-weight: 700; font-size: 18px; line-height: 24px; letter-spacing: .04em; text-transform: uppercase; color: var(--press-blue-deep); text-decoration: none; }
+  .skill:has(.skill-tile:hover, .skill-name a:hover) .skill-tile { background: var(--press-blue-deep); }
+  .skill:has(.skill-tile:hover, .skill-name a:hover) .skill-name a { text-decoration: underline; text-underline-offset: 4px; }
+  .skill-items { font-family: var(--font-text); font-style: italic; font-size: 18px; line-height: 28px; color: var(--oxblood); }
+  /* The links: the category in caps, then its count and arrow; plain text on desktop, outline boxes sized to
+     their text on tablet and phone (below). */
+  .skill-related { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .skill-related a { display: inline-flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); text-decoration: none; }
+  .skill-related a:hover .skill-cat { text-decoration: underline; text-underline-offset: 4px; }
+  .skill-cat { font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 22px; letter-spacing: .06em; text-transform: uppercase; color: var(--press-blue-deep); }
+  .skill-count { white-space: nowrap; font-family: var(--font-text); font-style: italic; font-size: 14px; line-height: 22px; color: var(--oxblood); }
+  .skill-arrow { display: inline-flex; margin-left: var(--space-2); vertical-align: -3px; color: var(--press-blue-deep); transition: transform .15s ease; }
+  .skill-related a:hover .skill-arrow { transform: translateX(4px); }
+  @media (prefers-reduced-motion: reduce) { .skill-arrow { transition: none; } }
+
+  /* Tablet: the photo beside the title and dek (it stretches to their height), the lede full width below. */
+  @media (max-width: 900px) {
+    .about { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-areas: 'photo head' 'lede lede' 'more more'; grid-template-rows: auto auto auto; column-gap: var(--space-8); }
+    .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { font-size: 96px; line-height: 76px; }
+  }
+  /* Tablet: a row per group, the tile left and as tall as the text beside it (the links sit level with its
+     foot), a rule between rows; the skills as one comma-separated line. */
+  @media (max-width: 900px) {
+    .skills-grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+    .skill { grid-row: auto; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); grid-template-rows: auto auto 1fr; column-gap: var(--space-6); padding: var(--space-6) 0; }
+    .skill:first-child { padding-top: 0; }
+    .skill:last-child { padding-bottom: 0; }
+    .skill + .skill { border-top: var(--stroke) solid var(--rule); }
+    .skill-tile { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 160px; margin-bottom: 0; }
+    .skill-name, .skill-items, .skill-related { grid-column: 2; }
+    .skill-items li { display: inline; }
+    .skill-items li:not(:last-child)::after { content: ','; }
+    .skill-related { flex-direction: row; flex-wrap: wrap; align-self: end; }
+    .skill-related a { padding: var(--space-1) var(--space-3); border: var(--stroke) solid var(--rule); }
+    .skill-related a:hover { background: var(--press-blue-tint); }
+    .skill-related a:hover .skill-cat { text-decoration: none; }
+  }
+  /* Phone: each group stacked and centred, the tile full width in a wide crop. */
+  @media (max-width: 560px) {
+    .skills-grid { row-gap: var(--space-8); }
+    .skill, .skill:first-child, .skill:last-child { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; padding: 0; text-align: center; }
+    .skill + .skill { border-top: 0; }
+    .skill-tile, .skill-name, .skill-items, .skill-related { grid-column: auto; grid-row: auto; }
+    .skill-tile { aspect-ratio: 5 / 2; min-height: 0; margin-bottom: var(--space-1); }
+    .skill-related { justify-content: center; align-self: auto; }
+  }
+  /* Phone: stacked; the photo spans the text width in a short landscape crop (head, raised hand, shoulders). */
+  @media (max-width: 640px) {
+    .about { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'photo' 'lede' 'more'; }
+    .about-photo { max-width: none; max-height: 340px; aspect-ratio: 4 / 3; }
+    /* A smaller pill, so the rule still shows either side of it on narrow screens. */
+    .about-more > summary { gap: var(--space-3); }
+    .about-more-pill { min-height: 40px; padding: 0 var(--space-4); font-size: 15px; line-height: 20px; }
+    .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { margin-right: var(--space-2); font-size: 84px; line-height: 66px; }
+    .about-lede p, .about-more p { text-align: left; hyphens: manual; }
+  }
+</style>

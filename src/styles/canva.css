@@ -26,9 +26,10 @@
 
 /* ---------- ArrowLink ---------- */
 .cg-arrowlink { gap: var(--space-3); font-family: var(--font-text); font-size: 22px; line-height: 28px; }
-.cg-arrowlink .cg-arrow { width: 38px; height: auto; }
+/* Ionicons' arrow sits in a square box. */
+.cg-arrowlink .cg-arrow { width: 30px; height: 30px; }
 .cg-arrowlink.is-stacked { font-size: 26px; line-height: 30px; }
-.cg-arrowlink.is-stacked .cg-arrow { width: 64px; }
+.cg-arrowlink.is-stacked .cg-arrow { width: 52px; height: 52px; }
 
 /* ---------- ContactFooter ---------- */
 .cg-foot-title { font-size: 48px; line-height: 50px; }

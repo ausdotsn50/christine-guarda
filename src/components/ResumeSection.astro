@@ -1,0 +1,13 @@
+---
+interface Props {
+  heading: string;
+  class?: string;
+}
+// Default slot: ResumeEntry elements. Slot "aside": an illustration or Button under the heading.
+
+const { heading, class: className } = Astro.props;
+---
+<section class:list={['cg-resume', className]}>
+  <div class="cg-resume-head"><h3 class="cg-resume-heading">{heading}</h3><slot name="aside" /></div>
+  <div class="cg-resume-entries"><slot /></div>
+</section>
