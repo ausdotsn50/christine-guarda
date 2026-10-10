@@ -18,6 +18,18 @@
 .cg-mast-link.is-active { color: var(--press-blue); text-underline-offset: 8px; }
 .cg-mast-monogram { width: 60px; height: 60px; }
 
+/* ---------- Button ---------- */
+.cg-btn { min-height: 46px; padding: 0 var(--space-8); font-family: var(--font-text); font-size: 18px; line-height: 22px; }
+.cg-btn-outline { border-width: var(--stroke-heavy); }
+.cg-btn-sm { min-height: 34px; padding: 0 var(--space-4); font-size: 14px; line-height: 18px; }
+.cg-btn-sm.cg-btn-outline { border-width: var(--stroke); }
+
+/* ---------- ArrowLink ---------- */
+.cg-arrowlink { gap: var(--space-3); font-family: var(--font-text); font-size: 22px; line-height: 28px; }
+.cg-arrowlink .cg-arrow { width: 38px; height: auto; }
+.cg-arrowlink.is-stacked { font-size: 26px; line-height: 30px; }
+.cg-arrowlink.is-stacked .cg-arrow { width: 64px; }
+
 /* ---------- ContactFooter ---------- */
 .cg-foot-title { font-size: 48px; line-height: 50px; }
 .cg-foot-col .cg-kicker { margin-bottom: var(--space-4); font-family: var(--font-text); font-size: 20px; line-height: 24px; letter-spacing: .04em; }

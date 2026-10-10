@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Arrow from './Arrow.astro';
+
+interface Props extends HTMLAttributes<'a'> {
+  /** next (default) puts the arrow after the label; back flips it before. */
+  direction?: 'next' | 'back';
+  /** Arrow above the label, as in the Canva "NEXT" and "RETURN" links. */
+  stacked?: boolean;
+}
+
+// `slot` is dropped so <ArrowLink slot="…"> doesn't print a slot attribute on the element.
+const { direction, stacked, href, class: className, slot: _slot, ...rest } = Astro.props;
+const back = direction === 'back';
+---
+<a href={href || '#'} {...rest} class:list={['cg-arrowlink', back && 'is-back', stacked && 'is-stacked', className]}>{back && <Arrow back />}<span><slot /></span>{!back && <Arrow />}</a>

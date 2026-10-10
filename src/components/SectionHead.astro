@@ -1,0 +1,38 @@
+---
+interface Props {
+  /** ruled: rules above and below, centred. leaders: dotted leaders either side (page titles). split: head left, dek right. */
+  variant?: 'ruled' | 'leaders' | 'split';
+  /** xl = display-1 (72px), lg = display-2 (48px), md = headline (28px). Default xl for leaders, lg otherwise. */
+  size?: 'xl' | 'lg' | 'md';
+  /** Heading level, default 2. */
+  level?: 1 | 2 | 3 | 4;
+  /** One italic sentence under (or beside) the head. */
+  dek?: string;
+  /** Ruled variant only: a kicker line above the head. */
+  kicker?: string;
+  class?: string;
+}
+// Default slot: the heading text.
+
+const { variant = 'ruled', size: sizeProp, level = 2, dek, kicker, class: className } = Astro.props;
+const size = sizeProp || (variant === 'leaders' ? 'xl' : 'lg');
+const Tag = `h${level}` as const;
+const titleCls = ['cg-sh-title', `cg-sh-${size}`];
+---
+{variant === 'leaders' ? (
+  <div class:list={['cg-sh', 'cg-sh-leaders', className]}>
+    <div class="cg-sh-row"><span class="cg-sh-leader" aria-hidden="true"></span><Tag class:list={titleCls}><slot /></Tag><span class="cg-sh-leader" aria-hidden="true"></span></div>
+    {dek && <p class="cg-sh-dek">{dek}</p>}
+  </div>
+) : variant === 'split' ? (
+  <div class:list={['cg-sh', 'cg-sh-split', className]}>
+    <Tag class:list={titleCls}><slot /></Tag>
+    {dek && <p class="cg-sh-dek">{dek}</p>}
+  </div>
+) : (
+  <div class:list={['cg-sh', 'cg-sh-ruled', className]}>
+    {kicker && <p class="cg-kicker">{kicker}</p>}
+    <Tag class:list={titleCls}><slot /></Tag>
+    {dek && <p class="cg-sh-dek">{dek}</p>}
+  </div>
+)}

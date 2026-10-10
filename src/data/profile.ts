@@ -17,3 +17,7 @@ export const socials = [
   { label: 'Instagram', href: '#' },
   { label: 'LinkedIn', href: '#' },
 ];
+
+/** The front page's "A little about me". */
+export const aboutShort =
+  'I’m an AB Communication student with a background in writing, editorial work, and media production. I enjoy turning ideas into stories, developing content, and working behind the scenes to bring creative projects together. Through student-led publications, broadcasts, and productions, I continue to explore how communication can inform, engage, and connect people.';
