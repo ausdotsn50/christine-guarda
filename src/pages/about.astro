@@ -7,7 +7,9 @@ import '@fontsource/rochester/latin-400.css';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Article from '../components/Article.astro';
-import { bio, restOfMe, summary } from '../data/profile';
+import ResumeEntry from '../components/ResumeEntry.astro';
+import ResumeSection from '../components/ResumeSection.astro';
+import { bio, education, experience, restOfMe, summary } from '../data/profile';
 import portrait from '../assets/christine/about.png';
 import { icon } from '../lib/icons';
 
@@ -37,6 +39,16 @@ const chevron = icon('chevronDownOutline', { size: 20 });
         </Article>
       </div>
     </details>
+  </section>
+
+  <section class="resume">
+    <h2 class="cg-sr">Résumé</h2>
+    <ResumeSection heading="Education">
+      {education.map((e) => <ResumeEntry title={e.title} meta={e.meta} />)}
+    </ResumeSection>
+    <ResumeSection heading="Relevant experience">
+      {experience.map((e) => <ResumeEntry title={e.title} meta={e.meta}><p>{e.body}</p></ResumeEntry>)}
+    </ResumeSection>
   </section>
 </Base>
 
@@ -91,6 +103,21 @@ const chevron = icon('chevronDownOutline', { size: 20 });
   @media (prefers-reduced-motion: reduce) {
     .about-more-content { animation: none; }
     .about-more-icon { transition: none; }
+  }
+
+  /* The "Continue reading" rule is Education's top line; each résumé row closes with its own heavy rule, the one
+     under Education doubling as Experience's top. Skills starts the same gap below the last one. */
+  .resume { margin-top: 0; }
+  .resume :global(.cg-resume) { padding: var(--rule-gap) 0; border-top: 0; }
+  /* Unfolded, the statement sits between that rule and Education, so Education takes its own top rule. */
+  .about:has(.about-more[open]) + .resume { margin-top: var(--rule-gap); border-top: var(--stroke-heavy) solid var(--rule); }
+
+  /* Beside its entries, each résumé head (and the button under it) sits vertically centred in the row. */
+  /* Its heading is set from the column's width, up to 52px (the component's is 40px), so it fills more of its
+     third of the row and "Experience" still fits on narrow tablets. Stacked on phones, the component's 32px. */
+  @media (min-width: 721px) {
+    .resume :global(.cg-resume-head) { justify-content: center; container-type: inline-size; }
+    .resume :global(.cg-resume-heading) { font-size: clamp(26px, 15.5cqi, 52px); line-height: 1.08; }
   }
 
   /* Tablet: the photo beside the title and dek (it stretches to their height), the lede full width below. */

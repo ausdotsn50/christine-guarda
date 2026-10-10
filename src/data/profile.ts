@@ -33,6 +33,28 @@ export const bio = [
   'I’m currently interested in exploring live and events production, entertainment and media production, and marketing and advertising, and I value opportunities to contribute, learn, and bring ideas to life.',
 ];
 
+export const education = [
+  { title: 'University of Santo Tomas – Legazpi', meta: ['Bachelor of Arts in Communication', 'Expected graduation: 2027'] },
+];
+
+export const experience = [
+  {
+    title: 'Radyo Tomasino/Radio 107.5 FM — Head Writer',
+    meta: 'A.Y. 2025–2026',
+    body: 'Led junior writers, developed and edited scripts, and supported live broadcast operations: teleprompter, timer, host cueing, and content management.',
+  },
+  {
+    title: 'UST-Legazpi Talastas — Finance Officer',
+    meta: 'A.Y. 2024–2025 | A.Y. 2025–2026',
+    body: 'Prepared budget proposals, kept financial records, and coordinated event requirements with university offices.',
+  },
+  {
+    title: 'University Media & Productions — Production & Technical Team',
+    meta: '2023 – Present',
+    body: 'About 20 productions across production assistance, scoring, stage management, and technical support.',
+  },
+];
+
 /** "The rest of me", one string per paragraph. */
 export const restOfMe = [
   'I enjoy films, TV, musical theatre, and books, especially character-driven stories. I analyze characters through intuition, not theory. I start projects often, like fantasy stories, drawing prompts, and animation attempts. I don’t always finish them, but I love starting. I’m inspired by creations and moments: a story from someone’s experience, a niche meme, or a quiet night by the beach. I’m an introvert, so I like the quiet, but I also like loud conversations with the people I’m close to.',
