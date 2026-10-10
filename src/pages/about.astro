@@ -9,12 +9,27 @@ import Base from '../layouts/Base.astro';
 import Article from '../components/Article.astro';
 import ResumeEntry from '../components/ResumeEntry.astro';
 import ResumeSection from '../components/ResumeSection.astro';
-import { bio, education, experience, restOfMe, summary } from '../data/profile';
+import SectionHead from '../components/SectionHead.astro';
+import { bio, education, experience, restOfMe, skills, summary } from '../data/profile';
+import { categoryLabel } from '../data/categories';
+import { countLabel, getWorks } from '../lib/collections';
 import portrait from '../assets/christine/about.png';
 import { icon } from '../lib/icons';
 
 const [lede, ...moreBio] = bio;
 const chevron = icon('chevronDownOutline', { size: 20 });
+const arrow = icon('arrowForwardOutline', { size: 16 });
+
+// Each skill group's related categories with their work counts, from the works collection.
+const works = await getWorks();
+const skillGroups = skills.map((s) => ({
+  ...s,
+  related: s.related.map((slug) => ({
+    href: `/works/${slug}`,
+    label: categoryLabel(slug),
+    count: countLabel(works.filter((w) => w.data.category === slug).length, 'work'),
+  })),
+}));
 ---
 <Base title="About" description={summary}>
   <section class="about">
@@ -49,6 +64,24 @@ const chevron = icon('chevronDownOutline', { size: 20 });
     <ResumeSection heading="Relevant experience">
       {experience.map((e) => <ResumeEntry title={e.title} meta={e.meta}><p>{e.body}</p></ResumeEntry>)}
     </ResumeSection>
+  </section>
+
+  <section class="skills">
+    <SectionHead variant="leaders" size="lg">Skills</SectionHead>
+    <ul class="skills-grid">
+      {skillGroups.map((s) => (
+        <li class="skill">
+          <a class="skill-tile" href={s.related[0].href} tabindex="-1" aria-hidden="true" set:html={icon(s.icon)} />
+          <h3 class="skill-name"><a href={s.related[0].href}>{s.head}<span class="cg-sr">: see {s.related[0].label}</span></a></h3>
+          <ul class="skill-items">{s.items.map((item) => <Fragment><li>{item}</li>{' '}</Fragment>)}</ul>
+          <ul class="skill-related" aria-label={`Work showing ${s.head}`}>
+            {s.related.map((r) => (
+              <li><a href={r.href}><span class="skill-cat">{r.label}</span><span class="cg-sr">, </span><span class="skill-count">{r.count}<span class="skill-arrow" set:html={arrow} /></span></a></li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
   </section>
 </Base>
 
@@ -109,6 +142,10 @@ const chevron = icon('chevronDownOutline', { size: 20 });
      under Education doubling as Experience's top. Skills starts the same gap below the last one. */
   .resume { margin-top: 0; }
   .resume :global(.cg-resume) { padding: var(--rule-gap) 0; border-top: 0; }
+  .skills { margin-top: var(--rule-gap); }
+  /* The footer's top rule closes Skills, at the same gap (instead of the site's space-16 above the footer). */
+  :global(.site):has(.about) > :global(.site-main) { margin-bottom: 0; }
+  :global(.site):has(.about) > :global(.cg-foot) { padding-top: var(--rule-gap); }
   /* Unfolded, the statement sits between that rule and Education, so Education takes its own top rule. */
   .about:has(.about-more[open]) + .resume { margin-top: var(--rule-gap); border-top: var(--stroke-heavy) solid var(--rule); }
 
@@ -120,10 +157,64 @@ const chevron = icon('chevronDownOutline', { size: 20 });
     .resume :global(.cg-resume-heading) { font-size: clamp(26px, 15.5cqi, 52px); line-height: 1.08; }
   }
 
+  /* Skills: per group, a press-blue tile with its icon drawn in white (like the WorkCard tiles), the group name,
+     its skills, then small outline links to the Works categories that show them, with their work counts. The
+     tile and the name link to the main category; the tile is for the pointer only (keyboards and screen
+     readers get the name). Desktop: four columns, a skill per line. Tablet and phone (below): the skills run
+     on in one line, separated by commas, so the text stays short. */
+  .skills { display: flex; flex-direction: column; gap: var(--space-6); }
+  .skills-grid, .skill-items, .skill-related { list-style: none; margin: 0; padding: 0; }
+  .skills-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
+  /* Each group's tile, name, list and links share the grid's rows, so the links start level across the row. */
+  .skill { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: var(--space-3); }
+  .skill-tile { display: grid; place-items: center; aspect-ratio: 3 / 2; margin-bottom: var(--space-1); background: var(--press-blue); color: var(--on-blue); }
+  .skill-tile :global(svg) { width: 72px; height: 72px; }
+  .skill-name { margin: 0; }
+  .skill-name a { display: block; padding-bottom: var(--space-2); border-bottom: var(--stroke-heavy) solid var(--rule); font-family: var(--font-text); font-weight: 700; font-size: 18px; line-height: 24px; letter-spacing: .04em; text-transform: uppercase; color: var(--press-blue-deep); text-decoration: none; }
+  .skill:has(.skill-tile:hover, .skill-name a:hover) .skill-tile { background: var(--press-blue-deep); }
+  .skill:has(.skill-tile:hover, .skill-name a:hover) .skill-name a { text-decoration: underline; text-underline-offset: 4px; }
+  .skill-items { font-family: var(--font-text); font-style: italic; font-size: 18px; line-height: 28px; color: var(--oxblood); }
+  /* The links: the category in caps, then its count and arrow; plain text on desktop, outline boxes sized to
+     their text on tablet and phone (below). */
+  .skill-related { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .skill-related a { display: inline-flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); text-decoration: none; }
+  .skill-related a:hover .skill-cat { text-decoration: underline; text-underline-offset: 4px; }
+  .skill-cat { font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 22px; letter-spacing: .06em; text-transform: uppercase; color: var(--press-blue-deep); }
+  .skill-count { white-space: nowrap; font-family: var(--font-text); font-style: italic; font-size: 14px; line-height: 22px; color: var(--oxblood); }
+  .skill-arrow { display: inline-flex; margin-left: var(--space-2); vertical-align: -3px; color: var(--press-blue-deep); transition: transform .15s ease; }
+  .skill-related a:hover .skill-arrow { transform: translateX(4px); }
+  @media (prefers-reduced-motion: reduce) { .skill-arrow { transition: none; } }
+
   /* Tablet: the photo beside the title and dek (it stretches to their height), the lede full width below. */
   @media (max-width: 900px) {
     .about { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-areas: 'photo head' 'lede lede' 'more more'; grid-template-rows: auto auto auto; column-gap: var(--space-8); }
     .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { font-size: 96px; line-height: 76px; }
+  }
+  /* Tablet: a row per group, the tile left and as tall as the text beside it (the links sit level with its
+     foot), a rule between rows; the skills as one comma-separated line. */
+  @media (max-width: 900px) {
+    .skills-grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+    .skill { grid-row: auto; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); grid-template-rows: auto auto 1fr; column-gap: var(--space-6); padding: var(--space-6) 0; }
+    .skill:first-child { padding-top: 0; }
+    .skill:last-child { padding-bottom: 0; }
+    .skill + .skill { border-top: var(--stroke) solid var(--rule); }
+    .skill-tile { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 160px; margin-bottom: 0; }
+    .skill-name, .skill-items, .skill-related { grid-column: 2; }
+    .skill-items li { display: inline; }
+    .skill-items li:not(:last-child)::after { content: ','; }
+    .skill-related { flex-direction: row; flex-wrap: wrap; align-self: end; }
+    .skill-related a { padding: var(--space-1) var(--space-3); border: var(--stroke) solid var(--rule); }
+    .skill-related a:hover { background: var(--press-blue-tint); }
+    .skill-related a:hover .skill-cat { text-decoration: none; }
+  }
+  /* Phone: each group stacked and centred, the tile full width in a wide crop. */
+  @media (max-width: 560px) {
+    .skills-grid { row-gap: var(--space-8); }
+    .skill, .skill:first-child, .skill:last-child { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; padding: 0; text-align: center; }
+    .skill + .skill { border-top: 0; }
+    .skill-tile, .skill-name, .skill-items, .skill-related { grid-column: auto; grid-row: auto; }
+    .skill-tile { aspect-ratio: 5 / 2; min-height: 0; margin-bottom: var(--space-1); }
+    .skill-related { justify-content: center; align-self: auto; }
   }
   /* Phone: stacked; the photo spans the text width in a short landscape crop (head, raised hand, shoulders). */
   @media (max-width: 640px) {

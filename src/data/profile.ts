@@ -1,6 +1,10 @@
+import type { IconName } from '../lib/icons';
+import type { CategorySlug } from './categories';
+
 // The tagline, emails, phone and the front page's "A little about me" come from the Canva home page
 // (src/assets/CHRISTINE GUARDA PORTFOLIO/HOME.jpg); the resume entries from the design-system previews.
 // The About page's summary, bio and "The rest of me" come from the Canva About page (ABOUT.jpg).
+// The skills are the Canva About page's.
 // PLACEHOLDER: the social profile URLs and resume link are still dummy text.
 
 export const tagline = 'Writer | Communications and Media Creative';
@@ -53,6 +57,14 @@ export const experience = [
     meta: '2023 – Present',
     body: 'About 20 productions across production assistance, scoring, stage management, and technical support.',
   },
+];
+
+/** The About page's skills index: each group's icon (as in Canva), its skills, and the Works categories that show them. */
+export const skills: { head: string; icon: IconName; items: string[]; related: CategorySlug[] }[] = [
+  { head: 'Writing & Content', icon: 'createOutline', items: ['Scriptwriting', 'Editing', 'Copywriting', 'Content Writing'], related: ['scripts-stage', 'radio-broadcast'] },
+  { head: 'Editorial', icon: 'bookOutline', items: ['Publication Work', 'Editorial Development', 'Story Development'], related: ['editorial-publishing'] },
+  { head: 'Media & Production', icon: 'cameraOutline', items: ['Broadcast Production', 'Production Coordination', 'Live Production'], related: ['film-video', 'radio-broadcast'] },
+  { head: 'Communication', icon: 'peopleOutline', items: ['Team Coordination', 'Collaboration', 'Task Delegation', 'Project Support'], related: ['campaigns-advertising-pr'] },
 ];
 
 /** "The rest of me", one string per paragraph. */
