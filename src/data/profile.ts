@@ -1,8 +1,12 @@
 // The tagline, emails, phone and the front page's "A little about me" come from the Canva home page
 // (src/assets/CHRISTINE GUARDA PORTFOLIO/HOME.jpg); the resume entries from the design-system previews.
-// PLACEHOLDER: the social profile URLs, resume link, summary, bio, skills and "The rest of me" are still dummy text.
+// The About page's summary, bio and "The rest of me" come from the Canva About page (ABOUT.jpg).
+// PLACEHOLDER: the social profile URLs and resume link are still dummy text.
 
 export const tagline = 'Writer | Communications and Media Creative';
+
+/** The About page's one-line dek, also its meta description. */
+export const summary = 'A Communication student interested in ideas, people, and the work of bringing things together.';
 
 export const emails = [
   { label: 'School email', address: 'christineirishjoy.guarda@ust-legazpi.edu.ph', note: 'School' },
@@ -21,3 +25,15 @@ export const socials = [
 /** The front page's "A little about me". */
 export const aboutShort =
   'I’m an AB Communication student with a background in writing, editorial work, and media production. I enjoy turning ideas into stories, developing content, and working behind the scenes to bring creative projects together. Through student-led publications, broadcasts, and productions, I continue to explore how communication can inform, engage, and connect people.';
+
+/** The About page's longer bio, one string per paragraph. */
+export const bio = [
+  'I am an AB Communication student with experience in writing, media production, organizational coordination, and student-led projects. I chose Communication for its balance of practical and creative opportunities, letting me explore different areas of the field while building a foundation for professional work.',
+  'Through hands-on projects and productions, I’ve developed an interest in turning ideas into something clearer, more organized, and workable — and I enjoy collaboration, problem-solving, and the challenges of fast-paced production environments.',
+  'I’m currently interested in exploring live and events production, entertainment and media production, and marketing and advertising, and I value opportunities to contribute, learn, and bring ideas to life.',
+];
+
+/** "The rest of me", one string per paragraph. */
+export const restOfMe = [
+  'I enjoy films, TV, musical theatre, and books, especially character-driven stories. I analyze characters through intuition, not theory. I start projects often, like fantasy stories, drawing prompts, and animation attempts. I don’t always finish them, but I love starting. I’m inspired by creations and moments: a story from someone’s experience, a niche meme, or a quiet night by the beach. I’m an introvert, so I like the quiet, but I also like loud conversations with the people I’m close to.',
+];

@@ -4,6 +4,7 @@
 // No JavaScript: the panel is a popover, so the browser opens and closes it, closes it on Esc or a tap
 // outside, and returns focus to the button.
 import { Image } from 'astro:assets';
+import { icon } from '../../lib/icons';
 import logo from '../../assets/logos/cg-white.png';
 
 interface Props {
@@ -15,13 +16,13 @@ const { items } = Astro.props;
 <header class="menu-bar">
   <a class="menu-logo" href="/" aria-label="Home"><Image src={logo} alt="" width={112} loading="eager" /></a>
   <button class="menu-button" type="button" popovertarget="site-menu" aria-label="Open menu">
-    <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" focusable="false"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+    <Fragment set:html={icon('menuOutline', { size: 40 })} />
   </button>
 </header>
 
 <nav id="site-menu" class="menu-panel" popover aria-label="Menu">
   <button class="menu-button menu-close" type="button" popovertarget="site-menu" popovertargetaction="hide" aria-label="Close menu">
-    <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+    <Fragment set:html={icon('closeOutline', { size: 40 })} />
   </button>
   <ul>
     {items.map((it) => <li><a href={it.href} aria-current={it.current ? 'page' : undefined}>{it.label}</a></li>)}

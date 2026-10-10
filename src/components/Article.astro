@@ -1,0 +1,14 @@
+---
+interface Props {
+  /** Default true: the first paragraph opens with a press-blue drop cap. */
+  dropCap?: boolean;
+  /** 2 sets short pieces in two ruled columns at 900px and up. */
+  columns?: 1 | 2;
+  class?: string;
+}
+// Default slot: <p> elements (or a Markdown <Content />), with PullQuotes between them.
+// The drop cap styles the first <p> that is a direct child, so don't wrap the paragraphs.
+
+const { dropCap, columns, class: className } = Astro.props;
+---
+<div class:list={['cg-article', dropCap !== false && 'has-dropcap', columns === 2 && 'is-two-col', className]}><slot /></div>

@@ -1,0 +1,111 @@
+---
+// The About hero after the Canva About page (src/assets/CHRISTINE GUARDA PORTFOLIO/ABOUT.jpg), set as a news story:
+// beside the photo, the title, dek and the statement's first paragraph as the lede, opening with a script initial;
+// "Continue reading" unfolds the rest of the statement below in two ruled columns, like a jump to the
+// inside pages. The lede alone is about the photo's height. No JavaScript: the fold is a <details>.
+import '@fontsource/rochester/latin-400.css';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Article from '../components/Article.astro';
+import { bio, restOfMe, summary } from '../data/profile';
+import portrait from '../assets/christine/about.png';
+import { icon } from '../lib/icons';
+
+const [lede, ...moreBio] = bio;
+const chevron = icon('chevronDownOutline', { size: 20 });
+---
+<Base title="About" description={summary}>
+  <section class="about">
+    <header class="about-head">
+      <h1 class="about-title">About<br />Christine</h1>
+      <p class="about-dek">{summary}</p>
+    </header>
+    <figure class="about-photo">
+      <Image src={portrait} alt="Christine Guarda, laughing and waving" widths={[320, 420, 640, 840]} sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 900px) 260px, 420px" loading="eager" fetchpriority="high" />
+    </figure>
+    <div class="about-lede">
+      <Article><p>{lede}</p></Article>
+    </div>
+    <details class="about-more">
+      <summary>
+        <span class="cg-btn cg-btn-outline about-more-pill"><span class="when-closed">Continue reading</span><span class="when-open">Show less</span><span class="about-more-icon" set:html={chevron} /></span>
+      </summary>
+      <div class="about-more-content">
+        <Article columns={2} dropCap={false}>
+          {moreBio.map((p) => <p>{p}</p>)}
+          {restOfMe.map((p) => <p>{p}</p>)}
+        </Article>
+      </div>
+    </details>
+  </section>
+</Base>
+
+<style>
+  /* Desktop: photo left; the title, dek and lede right; the unfolding rest below at full width.
+     Tablet: the photo beside the title and dek, the lede full width under both. Phone: stacked, with a wide,
+     short photo crop so the lede starts near the top of the screen. */
+  /* One gap on both sides of every full-width rule from "Continue reading" down to the footer's top rule (below
+     the pill, for the "Continue reading" rule), so the sections keep the same rhythm whatever their content. */
+  :global(.site):has(.about) { --rule-gap: var(--space-8); }
+
+  .about { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-areas: 'photo head' 'photo lede' 'more more'; grid-template-rows: auto 1fr auto; column-gap: var(--space-12); row-gap: var(--space-6); }
+  .about-head { grid-area: head; container-type: inline-size; }
+  .about-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 15cqi, 88px); line-height: 0.92; text-transform: uppercase; color: var(--press-blue); }
+  .about-dek { margin: var(--space-4) 0 0; max-width: var(--measure); font-family: var(--font-text); font-style: italic; font-size: 20px; line-height: 30px; color: var(--press-blue-deep); }
+  /* The cutout on a square-cornered press-blue panel, as in Canva. Her raised hand is cut by the photo's own edge,
+     so the cutout sits against the panel's left edge: the cut lines up with the frame, and the hand reads as
+     reaching out of it rather than ending in mid-air. */
+  /* The panel stretches to the full height of the title, dek and lede beside it, so the two halves balance.
+     The portrait is laid over it (absolutely, so it can't set the height itself) and fills it: scaled to the
+     panel's width, anchored at the top-left with headroom above her, so the head and raised hand always show
+     and any crop falls at the bottom. */
+  .about-photo { grid-area: photo; position: relative; align-self: stretch; width: 100%; max-width: 420px; margin: 0; overflow: hidden; background: var(--press-blue); border-radius: var(--radius-none); }
+  .about-photo :global(img) { position: absolute; inset: 8% 0 0 0; width: 100%; height: 92%; max-width: none; object-fit: cover; object-position: left top; }
+  .about-lede { grid-area: lede; }
+  /* The lede's initial in Rochester, a Victorian letter-writing hand: cursive but nearly upright and narrow,
+     so the paragraph wraps close beside it. Smaller on tablets and phones (below). */
+  .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { margin: 8px var(--space-3) 0 0; font-family: 'Rochester', var(--font-display); font-weight: 400; font-size: 116px; line-height: 92px; color: var(--press-blue); }
+  /* Justified like newspaper copy, hyphenated so the lines don't open gaps; ragged right on phones, where the
+     measure is too short to justify cleanly (below). */
+  .about-lede p, .about-more p { text-align: justify; hyphens: auto; }
+  /* The two columns end level: paragraphs may run on from one column into the next. */
+  .about-more :global(.cg-article.is-two-col > p) { break-inside: auto; }
+
+  /* "Continue reading": an outline pill centred on a heavy rule, like a newspaper jump line, so it reads as a
+     control rather than a divider. The rule runs into it from both sides; the whole row is the toggle, and
+     its hover fill and focus ring show on the pill. */
+  .about-more { grid-area: more; }
+  .about-more > summary { display: flex; align-items: center; gap: var(--space-4); list-style: none; cursor: pointer; }
+  .about-more > summary::before, .about-more > summary::after { content: ''; flex: 1; border-top: var(--stroke-heavy) solid var(--rule); }
+  .about-more > summary::-webkit-details-marker { display: none; }
+  .about-more > summary:focus-visible { box-shadow: none; }
+  .about-more > summary:focus-visible .about-more-pill { box-shadow: var(--focus-ring); }
+  .about-more > summary:hover .about-more-pill { background: var(--press-blue-tint); }
+  .about-more-pill { flex: none; }
+  .about-more[open] .about-more-content { padding-top: var(--rule-gap); }
+  .about-more:not([open]) .when-open, .about-more[open] .when-closed { display: none; }
+  .about-more-icon { display: inline-flex; transition: transform .25s ease; }
+  .about-more[open] .about-more-icon { transform: rotate(180deg); }
+  .about-more-content { animation: about-reveal .4s ease both; }
+  @keyframes about-reveal { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .about-more-content { animation: none; }
+    .about-more-icon { transition: none; }
+  }
+
+  /* Tablet: the photo beside the title and dek (it stretches to their height), the lede full width below. */
+  @media (max-width: 900px) {
+    .about { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-areas: 'photo head' 'lede lede' 'more more'; grid-template-rows: auto auto auto; column-gap: var(--space-8); }
+    .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { font-size: 96px; line-height: 76px; }
+  }
+  /* Phone: stacked; the photo spans the text width in a short landscape crop (head, raised hand, shoulders). */
+  @media (max-width: 640px) {
+    .about { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'photo' 'lede' 'more'; }
+    .about-photo { max-width: none; max-height: 340px; aspect-ratio: 4 / 3; }
+    /* A smaller pill, so the rule still shows either side of it on narrow screens. */
+    .about-more > summary { gap: var(--space-3); }
+    .about-more-pill { min-height: 40px; padding: 0 var(--space-4); font-size: 15px; line-height: 20px; }
+    .about-lede :global(.cg-article.has-dropcap > p:first-of-type::first-letter) { margin-right: var(--space-2); font-size: 84px; line-height: 66px; }
+    .about-lede p, .about-more p { text-align: left; hyphens: manual; }
+  }
+</style>

@@ -2,6 +2,11 @@
 
 img, video { max-width: 100%; height: auto; }
 
+/* Ionicons, inlined by src/lib/icons.ts: the classes their SVGs carry, as the ion-icon element styles them. */
+.ionicon { fill: currentColor; stroke: currentColor; }
+.ionicon-fill-none { fill: none; }
+.ionicon-stroke-width { stroke-width: 32px; }
+
 :where(a, button, summary, [tabindex]):focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 .site { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--page-margin) var(--space-6); }

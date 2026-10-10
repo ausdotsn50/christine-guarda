@@ -1,9 +1,12 @@
 ---
-// Internal to ArrowLink: a 2px rule with an open head in currentColor. Not part of the design system's API.
+// Internal to ArrowLink: Ionicons' arrow-forward in currentColor (flipped for "back" by .cg-arrow-back).
+// Not part of the design system's API.
+import { icon } from '../lib/icons';
+
 interface Props {
   back?: boolean;
 }
 
 const { back = false } = Astro.props;
 ---
-<svg class:list={['cg-arrow', back && 'cg-arrow-back']} viewBox="0 0 28 12" width="28" height="12" aria-hidden="true" focusable="false"><path d="M0 6H26M20 1L26 6L20 11" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
+<Fragment set:html={icon('arrowForwardOutline', { size: 28, className: back ? 'cg-arrow cg-arrow-back' : 'cg-arrow' })} />
