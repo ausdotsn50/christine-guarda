@@ -1,0 +1,44 @@
+---
+import type { NavLink } from './types';
+
+interface Props {
+  /** Four links read best: two either side of the monogram. The active one gets press-blue-deep and an underline. */
+  links: NavLink[];
+  /** Short caps text at the right of the top bar, e.g. "Portfolio". */
+  edition?: string;
+  /** The dateline row under the nav, e.g. "UST–Legazpi · AB Communication · Class of 2027". */
+  dateline?: string;
+  /** Hide the oxblood top bar. Default true (shown). */
+  topBar?: boolean;
+  homeHref?: string;
+  homeLabel?: string;
+  label?: string;
+  class?: string;
+}
+// Slots: "monogram" (the CG mark as an <img> or inline SVG, or plain-type initials), "bar-mark" (a small mark for the top bar).
+
+const { links = [], edition, dateline, topBar = true, homeHref = '#', homeLabel = 'Home', label = 'Main', class: className } = Astro.props;
+const half = Math.ceil(links.length / 2);
+const sides = [links.slice(0, half), links.slice(half)];
+---
+<header class:list={['cg-mast', className]}>
+  {topBar !== false && (
+    <div class="cg-mast-bar">
+      <span class="cg-mast-bar-mark"><slot name="bar-mark" /></span>
+      {edition && <span class="cg-mast-bar-edition">{edition}</span>}
+    </div>
+  )}
+  <nav class="cg-mast-nav" aria-label={label}>
+    <ul class="cg-mast-side">
+      {sides[0].map((l) => (
+        <li><a href={l.href || '#'} class:list={['cg-mast-link', l.active && 'is-active']} aria-current={l.active ? 'page' : undefined}>{l.label}</a></li>
+      ))}
+    </ul>
+    <a class="cg-mast-monogram" href={homeHref} aria-label={homeLabel}><slot name="monogram" /></a>
+    <ul class="cg-mast-side">
+      {sides[1].map((l) => (
+        <li><a href={l.href || '#'} class:list={['cg-mast-link', l.active && 'is-active']} aria-current={l.active ? 'page' : undefined}>{l.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>

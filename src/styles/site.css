@@ -1,0 +1,9 @@
+/* Site layout around the cg-* components. Tokens only. */
+
+.skip-link { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 1; padding: var(--space-2) var(--space-4); background: var(--paper); color: var(--press-blue-deep); font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transform: translateY(-200%); }
+.skip-link:focus-visible { transform: none; }
+
+/* Under 900px the menu bar replaces the site Masthead. */
+@media (max-width: 900px) {
+  .site-mast { display: none; }
+}

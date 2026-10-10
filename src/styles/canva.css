@@ -1,0 +1,19 @@
+/* Adjustments that match the Canva pages (src/assets/CHRISTINE GUARDA PORTFOLIO/) where they differ from
+   the design system's measurements. components.css stays an exact copy of the design system's bundle.css;
+   everything here loads after it.
+   - Nav links, Buttons, ArrowLinks and footer column heads are Old Standard TT Bold in Canva, not Playfair,
+     and set larger.
+   - The masthead runs full bleed with the logo in the monogram box and no top bar; under 900px a logo and
+     menu bar replaces it (SiteMenu).
+   - The footer carries the contact and social glyphs.
+   Colour, space, radius and stroke are tokens throughout; the contrast rules still hold (blue text under
+   24px is press-blue-deep, the active nav link keeps its underline). */
+
+/* ---------- Masthead ---------- */
+/* Desktop only: under 900px the site uses the menu bar (src/components/site/SiteMenu.astro) instead. */
+.cg-mast-nav { gap: var(--space-6); padding: var(--space-8) 0 0; }
+.cg-mast-side { padding: var(--space-2) 0; }
+.cg-mast-link { font-family: var(--font-text); font-size: 28px; line-height: 36px; letter-spacing: .04em; }
+/* 28px is large text, so the active link can be press-blue, as in Canva; the underline stays. */
+.cg-mast-link.is-active { color: var(--press-blue); text-underline-offset: 8px; }
+.cg-mast-monogram { width: 60px; height: 60px; }

@@ -1,0 +1,65 @@
+---
+// The small-screen header (under 900px, where it replaces the Masthead): the logo and a menu button on an
+// oxblood bar, after the Canva top bar. The button opens every page as a flat list in a panel from the left.
+// No JavaScript: the panel is a popover, so the browser opens and closes it, closes it on Esc or a tap
+// outside, and returns focus to the button.
+import { Image } from 'astro:assets';
+import logo from '../../assets/logos/cg-white.png';
+
+interface Props {
+  items: { label: string; href: string; current: boolean }[];
+}
+
+const { items } = Astro.props;
+---
+<header class="menu-bar">
+  <a class="menu-logo" href="/" aria-label="Home"><Image src={logo} alt="" width={112} loading="eager" /></a>
+  <button class="menu-button" type="button" popovertarget="site-menu" aria-label="Open menu">
+    <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" focusable="false"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+  </button>
+</header>
+
+<nav id="site-menu" class="menu-panel" popover aria-label="Menu">
+  <button class="menu-button menu-close" type="button" popovertarget="site-menu" popovertargetaction="hide" aria-label="Close menu">
+    <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+  </button>
+  <ul>
+    {items.map((it) => <li><a href={it.href} aria-current={it.current ? 'page' : undefined}>{it.label}</a></li>)}
+  </ul>
+</nav>
+
+<style>
+  /* Sized after the desktop nav: the logo box matches the 60px monogram box, and the hamburger's lines span
+     20px, the cap height of the 28px HOME / ABOUT links. The sides follow the page margins. */
+  .menu-bar { display: none; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--space-16); padding: var(--space-2) var(--page-margin); background: var(--oxblood); color: var(--on-oxblood); }
+  /* The logo box takes the bar's cream, as the desktop monogram box takes the rule blue on paper. */
+  .menu-logo { display: grid; place-items: center; box-sizing: border-box; width: 60px; height: 60px; border: var(--stroke) solid var(--on-oxblood); }
+  .menu-logo :global(img) { width: 75%; height: 75%; object-fit: contain; }
+  .menu-button { display: grid; place-items: center; width: 52px; height: 52px; padding: 0; border: 0; background: none; color: var(--on-oxblood); cursor: pointer; }
+  .menu-bar .menu-button { margin-right: calc(var(--space-2) * -1); }
+  @media (max-width: 900px) {
+    .menu-bar { display: flex; }
+  }
+  @media (max-width: 640px) {
+    .menu-bar { padding-left: var(--page-margin-sm); padding-right: var(--page-margin-sm); }
+  }
+
+  /* The panel: oxblood, from the left edge, most of a phone's width. */
+  .menu-panel { box-sizing: border-box; inset: 0 auto 0 0; width: min(94vw, 440px); height: 100dvh; max-height: none; margin: 0; padding: var(--space-16) var(--space-8) var(--space-12); overflow-y: auto; border: 0; background: var(--oxblood); color: var(--on-oxblood); transform: translateX(-100%); transition: transform .25s ease, overlay .25s allow-discrete, display .25s allow-discrete; }
+  .menu-panel:popover-open { transform: none; }
+  @starting-style { .menu-panel:popover-open { transform: translateX(-100%); } }
+  .menu-panel::backdrop { background: transparent; transition: background-color .25s, overlay .25s allow-discrete, display .25s allow-discrete; }
+  .menu-panel:popover-open::backdrop { background: color-mix(in srgb, var(--oxblood) 45%, transparent); }
+  @starting-style { .menu-panel:popover-open::backdrop { background: transparent; } }
+  .menu-close { position: absolute; top: var(--space-4); right: var(--space-4); }
+
+  .menu-panel ul { list-style: none; margin: 0; padding: 0; }
+  /* Muted cream for the other pages (about 5:1 on oxblood), full cream and an underline for this one. */
+  .menu-panel a { display: inline-block; padding: var(--space-3) 0; font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 32px; text-transform: uppercase; text-decoration: none; color: color-mix(in srgb, var(--on-oxblood) 65%, var(--oxblood)); }
+  .menu-panel a:hover, .menu-panel a[aria-current='page'] { color: var(--on-oxblood); }
+  .menu-panel a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-panel, .menu-panel::backdrop { transition: none; }
+  }
+</style>
