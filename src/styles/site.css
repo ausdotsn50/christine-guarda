@@ -1,0 +1,25 @@
+/* Site layout around the cg-* components. Tokens only. */
+
+img, video { max-width: 100%; height: auto; }
+
+:where(a, button, summary, [tabindex]):focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.site { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--page-margin) var(--space-6); }
+.site-main { padding-top: var(--space-12); margin-bottom: var(--space-16); }
+.site-main > * + * { margin-top: var(--space-12); }
+
+/* Return / Next between two rules; the lower rule is the footer's own top rule. */
+.site-next { display: flex; justify-content: flex-end; padding: var(--space-6) 0; border-top: var(--stroke-heavy) solid var(--rule); }
+.site-next + .cg-foot { padding-top: 0; }
+
+.skip-link { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 1; padding: var(--space-2) var(--space-4); background: var(--paper); color: var(--press-blue-deep); font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transform: translateY(-200%); }
+.skip-link:focus-visible { transform: none; }
+
+/* Under 900px the menu bar replaces the site Masthead. */
+@media (max-width: 900px) {
+  .site-mast { display: none; }
+}
+
+@media (max-width: 640px) {
+  .site { padding-left: var(--page-margin-sm); padding-right: var(--page-margin-sm); }
+}

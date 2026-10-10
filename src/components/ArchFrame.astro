@@ -1,0 +1,15 @@
+---
+interface Props {
+  /** Max width, default 360px. A number is read as px. */
+  width?: string | number;
+  class?: string;
+}
+// Default slot: a cutout portrait (transparent PNG) as an <img>; it rises above the arch.
+
+const { width, class: className } = Astro.props;
+const maxWidth = typeof width === 'number' ? `${width}px` : width;
+---
+<figure class:list={['cg-arch', className]} style={maxWidth ? `max-width:${maxWidth}` : undefined}>
+  <div class="cg-arch-field" aria-hidden="true"></div>
+  <div class="cg-arch-img"><slot /></div>
+</figure>

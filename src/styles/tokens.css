@@ -1,0 +1,58 @@
+/* Christine Guarda Portfolio — generated from tokens.json */
+:root {
+  /* colour */
+  --paper: #fff6ea;
+  --paper-deep: #f4e5cd;
+  --press-blue: #1181c8;
+  --press-blue-deep: #0d68a6;
+  --press-blue-tint: #dbe9f4;
+  --oxblood: #612c2d;
+  --on-blue: var(--paper);
+  --on-oxblood: var(--paper);
+  --rule: var(--press-blue);
+  --link: var(--press-blue-deep);
+  /* shadow */
+  --focus-ring: 0 0 0 2px #fff6ea, 0 0 0 4px #612c2d;
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --page-margin: 48px;
+  --page-margin-sm: 16px;
+  /* radius */
+  --radius-none: 0px;
+  --radius-pill: 9999px;
+  --radius-arch: 9999px;
+  /* stroke */
+  --stroke-heavy: 3px;
+  --stroke: 2px;
+  --stroke-hair: 1px;
+  /* layout */
+  --content-max: 1200px;
+  --measure: 66ch;
+  /* font families */
+  --font-display: "Playfair Display", "Bodoni Moda", Didot, Georgia, serif;
+  --font-text: "Old Standard TT", "Libre Caslon Text", Georgia, serif;
+}
+
+/* type styles: one class per style in tokens.json */
+.name-plate { font-family: var(--font-display); font-size: 120px; line-height: 0.92; font-weight: 900; }
+.display-1 { font-family: var(--font-display); font-size: 72px; line-height: 76px; font-weight: 700; }
+.display-2 { font-family: var(--font-display); font-size: 48px; line-height: 52px; font-weight: 700; }
+.column-head { font-family: var(--font-display); font-size: 40px; line-height: 44px; font-weight: 700; }
+.title-italic { font-family: var(--font-display); font-size: 44px; line-height: 50px; font-weight: 700; font-style: italic; }
+.headline { font-family: var(--font-display); font-size: 28px; line-height: 32px; font-weight: 700; }
+.pull-quote { font-family: var(--font-display); font-size: 32px; line-height: 42px; font-weight: 400; font-style: italic; }
+.label { font-family: var(--font-display); font-size: 15px; line-height: 20px; font-weight: 700; letter-spacing: 0.06em; }
+.kicker { font-family: var(--font-display); font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.14em; }
+.dek { font-family: var(--font-text); font-size: 20px; line-height: 30px; font-weight: 400; font-style: italic; }
+.body { font-family: var(--font-text); font-size: 18px; line-height: 30px; font-weight: 400; }
+.entry-title { font-family: var(--font-text); font-size: 18px; line-height: 26px; font-weight: 700; }
+.meta { font-family: var(--font-text); font-size: 16px; line-height: 22px; font-weight: 400; font-style: italic; }
+.caption { font-family: var(--font-text); font-size: 14px; line-height: 20px; font-weight: 400; }
+.dateline { font-family: var(--font-text); font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; }

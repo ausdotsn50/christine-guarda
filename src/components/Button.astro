@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'>, Pick<HTMLAttributes<'a'>, 'target' | 'rel' | 'download'> {
+  /** solid: press-blue-deep pill, one per view. outline: rule-bordered pill. Default solid. */
+  variant?: 'solid' | 'outline';
+  size?: 'md' | 'sm';
+  /** Renders an <a> when set. */
+  href?: string;
+}
+
+// `slot` is dropped so <Button slot="aside"> doesn't print a slot attribute on the element.
+const { variant = 'solid', size, href, class: className, slot: _slot, ...rest } = Astro.props;
+const cls = ['cg-btn', `cg-btn-${variant}`, size === 'sm' && 'cg-btn-sm', className];
+---
+{href
+  ? <a href={href} {...rest} class:list={cls}><slot /></a>
+  : <button type="button" {...rest} class:list={cls}><slot /></button>}
