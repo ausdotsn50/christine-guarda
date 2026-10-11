@@ -38,7 +38,7 @@ export const bio = [
 ];
 
 export const education = [
-  { title: 'University of Santo Tomas – Legazpi', meta: ['Bachelor of Arts in Communication', 'Expected graduation: 2027'] },
+  { title: 'University of Santo Tomas – Legazpi', meta: 'Bachelor of Arts in Communication', body: 'Expected graduation: 2027' },
 ];
 
 export const experience = [
