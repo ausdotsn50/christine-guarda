@@ -1,0 +1,141 @@
+---
+// One Academic work on its category page, as a story in one column, the same for every work: a kicker (its medium,
+// its award), its title in italics, Christine's description, then its video in a 16:9 frame or its set of pictures in a
+// sideways strip (WorkGallery), and its other materials
+// as pills on the right (its audio, scripts and other links, opening in a new tab; its poster, in a Lightbox). A work
+// with a picture of its own and no video shows that in the frame instead.
+// The still shows in full colour (the photo wash is for cards). The video plays in place: its still links to it on
+// Drive (so it works without JavaScript); with the script below,
+// pressing it loads the player in the frame instead, and starting one video stops any other.
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Button from '../Button.astro';
+import Lightbox from './Lightbox.astro';
+import WorkGallery from './WorkGallery.astro';
+import { icon } from '../../lib/icons';
+import { embedUrl } from '../../lib/media';
+import type { Work } from '../../lib/collections';
+
+interface Props {
+  work: Work;
+}
+
+const { work } = Astro.props;
+const { title, medium, year, award, video, audio, scripts, poster, image, gallery, links } = work.data;
+const { Content } = await render(work);
+const posterId = `poster-${work.id}`;
+const kicker = [medium, year, award?.level].filter(Boolean).join(' - ');
+const external = (href: string) => /^https?:/.test(href);
+const play = icon('play', { size: 30 });
+const arrow = icon('arrowForwardOutline', { size: 16 });
+const hasPills = Boolean(audio || scripts.length || poster || links.length);
+---
+<article class="entry" id={work.id}>
+  <header class="entry-head">
+    {kicker && <p class="entry-kicker">{kicker}</p>}
+    <h2 class="entry-title">{title}</h2>
+  </header>
+  <div class="entry-text"><Content /></div>
+
+  {video && (
+    <div class="entry-video">
+      <a class="entry-still" href={video.href} target="_blank" rel="noopener" data-embed={embedUrl(video.href)} data-title={`${title}, full video`}>
+        <Image src={video.still} alt={video.alt} widths={[600, 900, 1300, 1700]} sizes="(max-width: 900px) calc(100vw - 32px), 820px" />
+        <span class="entry-play" aria-hidden="true" set:html={play} />
+        <span class="cg-sr">Play {title}</span>
+      </a>
+    </div>
+  )}
+  {gallery.length > 0 && <WorkGallery id={work.id} title={title} images={gallery} />}
+  {!video && !gallery.length && image && (
+    <div class="entry-video is-image"><Image src={image.src} alt={image.alt} widths={[600, 900, 1300]} sizes="(max-width: 900px) calc(100vw - 32px), 820px" /></div>
+  )}
+
+  {hasPills && (
+    <div class="entry-pills">
+      {audio && <Button variant="outline" size="sm" href={audio.href} target="_blank" rel="noopener">Listen to Full Audio<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>}
+      {scripts.map((s) => (
+        <Button variant="outline" size="sm" href={s.href} target="_blank" rel="noopener">Read Script{s.label && `: ${s.label}`}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>
+      ))}
+      {poster && <Button variant="outline" size="sm" popovertarget={posterId}>View Poster<span class="cg-sr">{` of ${title}`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>}
+      {links.map((l) => external(l.href)
+        ? <Button variant="outline" size="sm" href={l.href} target="_blank" rel="noopener">{l.label}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>
+        : <Button variant="outline" size="sm" href={l.href}>{l.label}<span class="entry-pill-icon" set:html={arrow} /></Button>)}
+    </div>
+  )}
+
+  {poster && (
+    <Lightbox id={posterId} label={`${title}, poster`} class="lightbox-poster">
+      <figure class="entry-poster">
+        <Image src={poster.src} alt={poster.alt} widths={[600, 900, 1300]} sizes="min(100vw, 66vh)" loading="lazy" />
+        <figcaption><cite>{title}</cite>{poster.credit && <Fragment> - {poster.credit}</Fragment>}</figcaption>
+      </figure>
+    </Lightbox>
+  )}
+</article>
+
+<script>
+  // Plays a video in its frame: the still is a link to it on Drive; pressing it loads the player in its place.
+  // Starting one video stops (and restores the still of) any other.
+  document.addEventListener('click', (e) => {
+    const still = (e.target as Element).closest?.<HTMLAnchorElement>('a.entry-still[data-embed]');
+    if (!still) return;
+    e.preventDefault();
+    document.querySelectorAll<HTMLIFrameElement>('.entry-video iframe').forEach((player) => {
+      player.closest('.entry-video')?.querySelector<HTMLElement>('a.entry-still')?.removeAttribute('hidden');
+      player.remove();
+    });
+    const player = document.createElement('iframe');
+    player.src = still.dataset.embed!;
+    player.title = still.dataset.title!;
+    player.allow = 'autoplay; fullscreen; picture-in-picture';
+    player.allowFullscreen = true;
+    still.hidden = true;
+    still.closest('.entry-video')!.append(player);
+    player.focus();
+  });
+</script>
+
+<style>
+  /* One column, centred, at a reading width; the video takes its full width. */
+  .entry { display: flex; flex-direction: column; gap: var(--space-4); width: min(100%, 820px); margin-inline: auto; scroll-margin-top: var(--space-6); }
+  /* A rule between works (by position among the articles: the page's script may sit between two entries). */
+  .entry:not(:first-of-type) { padding-top: var(--space-12); border-top: var(--stroke-heavy) solid var(--rule); }
+
+  .entry-head { display: flex; flex-direction: column; gap: var(--space-2); }
+  .entry-kicker { margin: 0; font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--press-blue-deep); }
+  .entry-title { margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: clamp(36px, 5vw, 56px); line-height: 1.05; color: var(--press-blue); }
+  .entry-text :global(p) { margin: 0 0 var(--space-4); font-family: var(--font-text); font-size: 18px; line-height: 30px; color: var(--oxblood); }
+  .entry-text :global(p:last-child) { margin-bottom: 0; }
+
+  /* The video: a 16:9 frame (letterboxed films keep their bars), its still a link that plays it in place. */
+  .entry-video { position: relative; margin-top: var(--space-2); aspect-ratio: 16 / 9; overflow: hidden; background: #000; border: var(--stroke-hair) solid var(--rule); }
+  .entry-video.is-image { background: var(--press-blue); }
+  .entry-video :global(img) { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .entry-video.is-image :global(img) { object-fit: cover; }
+  .entry-video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .entry-still { position: absolute; inset: 0; display: block; overflow: hidden; }
+  .entry-still[hidden] { display: none; }
+  .entry-still :global(img) { transition: transform .3s ease; }
+  .entry-still:is(:hover, :focus-visible) :global(img) { transform: scale(1.02); }
+  .entry-play { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 72px; height: 72px; margin: -36px 0 0 -36px; border: var(--stroke) solid var(--on-oxblood); background: var(--oxblood); color: var(--on-oxblood); transition: background-color .15s ease; }
+  .entry-still:is(:hover, :focus-visible) .entry-play { background: color-mix(in srgb, var(--oxblood), black 25%); }
+
+  /* The other materials: small pills under the video, at its right, each with an arrow that nudges on hover. */
+  .entry-pills { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
+  .entry-pill-icon { display: inline-flex; transition: transform .15s ease; }
+  .entry-pills :global(.cg-btn:is(:hover, :focus-visible)) .entry-pill-icon { transform: translateX(4px); }
+
+  /* A poster in its preview: whole, as tall as the screen allows. */
+  .entry-poster { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .entry-poster :global(img) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8)); max-height: calc(100dvh - 2 * var(--space-8) - 48px - var(--space-3) - var(--space-12)); }
+  .entry-poster figcaption { font-family: var(--font-text); font-size: 16px; line-height: 24px; color: var(--on-oxblood); }
+
+  @media (max-width: 640px) {
+    .entry-play { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
+    .entry-poster :global(img) { max-width: calc(100vw - 2 * var(--page-margin-sm)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .entry-still :global(img), .entry-play, .entry-pill-icon { transition: none; }
+  }
+</style>

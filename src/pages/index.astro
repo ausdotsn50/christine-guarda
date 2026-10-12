@@ -5,11 +5,11 @@ import ArchFrame from '../components/ArchFrame.astro';
 import Button from '../components/Button.astro';
 import SectionHead from '../components/SectionHead.astro';
 import WorkCard from '../components/WorkCard.astro';
-import { getWorks, workHref } from '../lib/collections';
+import { cardImage, getWorks, workHref } from '../lib/collections';
 import { aboutShort, tagline } from '../data/profile';
 import portrait from '../assets/christine/home.png';
 
-const featured = (await getWorks()).filter((w) => w.data.featured).sort((a, b) => a.data.order - b.data.order);
+const featured = (await getWorks()).filter((w) => w.data.featured).sort((a, b) => a.data.featured! - b.data.featured!);
 if (featured.length > 3) {
   throw new Error(`At most 3 works can be featured; found ${featured.length}: ${featured.map((w) => w.id).join(', ')}`);
 }
@@ -38,12 +38,12 @@ if (featured.length > 3) {
     <SectionHead variant="split" dek="Stories, publications, and productions that shaped my work in communication.">Featured works</SectionHead>
     <div class="cg-work-grid featured-grid">
       {featured.map((w) => (
-        <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} href={workHref(w)}>
-          {w.data.image && <Fragment slot="image"><Image src={w.data.image.src} alt={w.data.image.alt} widths={[400, 800]} sizes="(max-width: 720px) 100vw, 360px" /></Fragment>}
+        <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} href={workHref(w)} mediaLink photo={cardImage(w)?.photo}>
+          {cardImage(w) && <Fragment slot="image"><Image src={cardImage(w)!.src} alt={cardImage(w)!.alt} widths={[400, 800]} sizes="(max-width: 720px) 100vw, 360px" /></Fragment>}
         </WorkCard>
       ))}
     </div>
-    <div class="featured-more"><Button variant="outline" href="/works">Explore my work</Button></div>
+    <div class="featured-more"><Button variant="outline" href="/works/academic">Explore my work</Button></div>
   </section>
 </Base>
 

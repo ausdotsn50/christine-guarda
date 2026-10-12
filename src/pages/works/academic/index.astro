@@ -1,0 +1,35 @@
+---
+// The Academic & University Works section front: the flag and sub-navigation (All, then the six categories), then
+// a band per category previewing its first works as WorkCards, three across, each band with "See all". A card's
+// image (its video's still, else its illustration) is its one link, to the work on its category page.
+import { Image } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import Band from '../../../components/site/Band.astro';
+import SectionFlag from '../../../components/site/SectionFlag.astro';
+import { academicPages, categories, workGroups } from '../../../data/categories';
+import { cardImage, countLabel, getWorks, workHref } from '../../../lib/collections';
+
+const group = workGroups.academic;
+const works = await getWorks();
+const bands = categories.map((c) => ({ ...c, works: works.filter((w) => w.data.category === c.slug) }));
+---
+<Base title={group.title} description={group.dek}>
+  <SectionFlag group={group} pages={academicPages} current={group.href} />
+
+  {bands.map((b) => (
+    <Band title={b.label} meta={countLabel(b.works.length, 'work')} href={`/works/academic/${b.slug}`}>
+      {b.works.length > 0
+        ? (
+          <div class="shelf is-works">
+            {b.works.slice(0, 3).map((w) => (
+              <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} award={w.data.kicker} href={workHref(w)} mediaLink photo={cardImage(w)?.photo}>
+                {cardImage(w) && <Fragment slot="image"><Image src={cardImage(w)!.src} alt={cardImage(w)!.alt} widths={[400, 800]} sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 380px" /></Fragment>}
+              </WorkCard>
+            ))}
+          </div>
+        )
+        : <p class="band-empty">Works coming soon.</p>}
+    </Band>
+  ))}
+</Base>

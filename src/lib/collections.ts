@@ -1,4 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import cameraArt from '../assets/thumbnail/camera.png';
+import flameArt from '../assets/thumbnail/flame.png';
+import microphoneArt from '../assets/thumbnail/microphone.png';
 import { categories, categoryLabel, documentationSections, type CategorySlug } from '../data/categories';
 import type { IndexGroup } from '../components/types';
 
@@ -6,9 +10,9 @@ export type Work = CollectionEntry<'works'>;
 export type Essay = CollectionEntry<'essays'>;
 export type Gallery = CollectionEntry<'galleries'>;
 
-/** Newest first, then by `order`. */
+/** By `order` (their place on the category page), then newest first. */
 export function sortWorks(works: Work[]): Work[] {
-  return [...works].sort((a, b) => b.data.year - a.data.year || a.data.order - b.data.order);
+  return [...works].sort((a, b) => a.data.order - b.data.order || (b.data.year ?? 0) - (a.data.year ?? 0));
 }
 
 /** By `order`, then newest first (a gallery without a year after those with one). */
@@ -54,6 +58,27 @@ export function inSequence<T extends { id: string }>(items: T[]) {
 
 /** The id of an essay's preview (its Lightbox). */
 export const essayPreviewId = (essay: Essay) => `essay-${essay.id}`;
+
+/** Each category's generic card art (white linework on press-blue), for a work with no image of its own: three
+ *  drawings, two categories each. */
+const categoryArt: Record<CategorySlug, ImageMetadata> = {
+  'film-video': flameArt,
+  'radio-broadcast': microphoneArt,
+  'editorial-publishing': cameraArt,
+  'scripts-stage': microphoneArt, // voice and performance
+  'campaigns-advertising-pr': flameArt, // the spark that gets a campaign noticed
+  'visual-brand-design': cameraArt, // the visual one
+};
+
+/** A work's card image: its video's still (a photo, for the photo wash), else its own image or the first of its
+ *  pictures, else its category's generic art (decorative: the card's link is named by the title). */
+export function cardImage(w: Work): { src: ImageMetadata; alt: string; photo: boolean } {
+  if (w.data.video) return { src: w.data.video.still, alt: w.data.video.alt, photo: true };
+  if (w.data.image) return { ...w.data.image, photo: false };
+  const first = w.data.gallery[0];
+  if (first) return { src: first.src, alt: first.alt, photo: false };
+  return { src: categoryArt[w.data.category], alt: '', photo: false };
+}
 
 export const workHref = (w: Work) => `/works/academic/${w.data.category}#${w.id}`;
 

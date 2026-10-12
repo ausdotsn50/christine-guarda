@@ -17,6 +17,7 @@ import {
   mail,
   menuOutline,
   peopleOutline,
+  play,
 } from 'ionicons/icons';
 
 const icons = {
@@ -35,6 +36,7 @@ const icons = {
   mail,
   menuOutline,
   peopleOutline,
+  play,
 };
 
 export type IconName = keyof typeof icons;

@@ -7,23 +7,27 @@ interface Props {
   medium?: string;
   role?: string;
   href?: string;
-  /** A kicker above the title, e.g. "Quill Awards · Excellence". */
+  /** A kicker above the title, e.g. "Quill Awards - Excellence". */
   award?: string;
   linkLabel?: string;
+  /** Site addition: the image is the card's one link, named by the title; no title link, no "View project". */
+  mediaLink?: boolean;
+  /** Site addition: the image is a camera photo (a video still), so it takes the soft photo wash (site.css). */
+  photo?: boolean;
   class?: string;
 }
 // Slot "image": a 3:2 <img> or <Image>, ideally a blue line illustration. A halftone placeholder shows without one.
 
-const { title, medium, role, href: hrefProp, award, linkLabel, class: className } = Astro.props;
+const { title, medium, role, href: hrefProp, award, linkLabel, mediaLink = false, photo = false, class: className } = Astro.props;
 const href = hrefProp || '#';
 const meta = [medium, role].filter(Boolean).join(' | ');
 // Rendered up front so a conditionally empty image slot still falls back to the placeholder.
 const image = Astro.slots.has('image') ? (await Astro.slots.render('image')).trim() : '';
 ---
-<article class:list={['cg-work', className]}>
-  <a href={href} class="cg-work-media" tabindex="-1" aria-hidden="true">{image ? <Fragment set:html={image} /> : <span class="cg-work-placeholder"></span>}</a>
+<article class:list={['cg-work', mediaLink && 'is-media-link', className]}>
+  <a href={href} class:list={['cg-work-media', photo && 'photo-wash']} {...(mediaLink ? { 'aria-label': title } : { tabindex: '-1', 'aria-hidden': 'true' })}>{image ? <Fragment set:html={image} /> : <span class="cg-work-placeholder"></span>}</a>
   {award && <p class="cg-kicker cg-work-award">{award}</p>}
-  <h3 class="cg-work-title"><a href={href}>{title}</a></h3>
+  <h3 class="cg-work-title">{mediaLink ? title : <a href={href}>{title}</a>}</h3>
   {meta && <p class="cg-work-meta">{meta}</p>}
-  <ArrowLink href={href} class="cg-work-link">{linkLabel || 'View project'}<span class="cg-sr">{`: ${title}`}</span></ArrowLink>
+  {!mediaLink && <ArrowLink href={href} class="cg-work-link">{linkLabel || 'View project'}<span class="cg-sr">{`: ${title}`}</span></ArrowLink>}
 </article>

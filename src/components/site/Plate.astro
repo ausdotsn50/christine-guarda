@@ -1,8 +1,8 @@
 ---
 // A gallery piece as a plate: a ruled tile with its caption ("Pl. 3 — Asparagus"); pressing the tile floats the
 // piece, whole and as large as the screen allows, in a Lightbox. Two kinds: art sits whole on a paper mount in a 3:4
-// tile (most pieces are drawn at 3:4, as Instagram's grid now is); a photo fills a square tile under a soft paper
-// wash that evens out camera shots of differing quality, lifting on hover and focus. With its shelf's neighbours
+// tile (most pieces are drawn at 3:4, as Instagram's grid now is); a photo fills a square tile under the soft
+// photo wash (site.css), lifting on hover and focus. With its shelf's neighbours
 // (see inSequence), the preview steps to the previous / next plate and shows "3 of 7" (see Lightbox). Lay plates
 // out with PlateShelf.
 import { Image } from 'astro:assets';
@@ -40,7 +40,7 @@ const name = title ?? series;
 const source = [title && series, year].filter(Boolean).join(', ');
 ---
 <figure class:list={['plate', `is-${kind}`]}>
-  <button class="plate-open" type="button" popovertarget={id}>
+  <button class:list={['plate-open', kind === 'photo' && 'photo-wash']} type="button" popovertarget={id}>
     <Image src={src} alt={alt} widths={[300, 600]} sizes="(max-width: 640px) 50vw, (max-width: 900px) 33vw, 300px" />
     <span class="cg-sr">(view larger)</span>
   </button>
@@ -66,12 +66,7 @@ const source = [title && series, year].filter(Boolean).join(', ');
   .is-art .plate-open { aspect-ratio: 3 / 4; }
   .is-art .plate-open :global(img) { object-fit: contain; }
   .is-photo .plate-open { aspect-ratio: 1; }
-  .is-photo .plate-open :global(img) { object-fit: cover; filter: saturate(.85); }
-  /* The photos' soft wash: paper over the picture, warming and lifting it a little, so shots from different cameras
-     and light sit together; it lifts, and the colour returns, on hover and keyboard focus. */
-  .is-photo .plate-open::after { content: ''; position: absolute; inset: 0; background: var(--paper); opacity: .22; pointer-events: none; transition: opacity .3s ease; }
-  .is-photo .plate-open:is(:hover, :focus-visible)::after { opacity: 0; }
-  .is-photo .plate-open:is(:hover, :focus-visible) :global(img) { filter: none; }
+  .is-photo .plate-open :global(img) { object-fit: cover; }
   .plate figcaption { font-family: var(--font-text); font-style: italic; font-size: 14px; line-height: 20px; color: var(--oxblood); }
   .plate-no { font-style: normal; font-weight: 700; letter-spacing: .06em; color: var(--press-blue-deep); }
   /* In the preview: the whole piece, never cropped, on paper (some art has transparent parts), as large as the
@@ -90,5 +85,5 @@ const source = [title && series, year].filter(Boolean).join(', ');
   @media (max-width: 640px) {
     .plate-large :global(img) { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-4) - 2 * (48px + var(--space-3)) - var(--space-16)); }
   }
-  @media (prefers-reduced-motion: reduce) { .plate-open :global(img), .is-photo .plate-open::after { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .plate-open :global(img) { transition: none; } }
 </style>

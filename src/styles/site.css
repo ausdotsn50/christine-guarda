@@ -55,3 +55,23 @@ img, video { max-width: 100%; height: auto; }
 .cg-mast-sublink:hover { background: var(--press-blue-tint); color: var(--press-blue-deep); }
 .cg-mast-sublink[aria-current] { color: var(--press-blue-deep); text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
 @media (prefers-reduced-motion: reduce) { .cg-mast-sub { transition: none; } }
+
+/* WorkCard images ruled in a hairline, like the gallery tiles and the film frames. */
+.cg-work-media { box-sizing: border-box; border: var(--stroke-hair) solid var(--rule); }
+
+/* A WorkCard whose image is its one link (mediaLink): the title is plain press-blue type, and the image zooms only
+   when it is the thing hovered. */
+.cg-work.is-media-link .cg-work-title { color: var(--press-blue); }
+.cg-work.is-media-link:hover .cg-work-media img { transform: none; }
+.cg-work.is-media-link .cg-work-media:is(:hover, :focus-visible) img { transform: scale(1.03); }
+
+/* The soft wash over camera photos (Documentation's, the film stills): paper over the picture and its colour a little
+   softened, so shots from different cameras and light sit together; it lifts, and the colour returns, on hover and
+   keyboard focus. Put the class on the link or button that holds the photo; anything inside it that must stay
+   above the wash (a play mark) needs z-index: 1. */
+.photo-wash { position: relative; }
+.photo-wash img { filter: saturate(.85); transition: transform .3s ease, filter .3s ease; }
+.photo-wash::after { content: ''; position: absolute; inset: 0; background: var(--paper); opacity: .22; pointer-events: none; transition: opacity .3s ease; }
+.photo-wash:is(:hover, :focus-visible)::after { opacity: 0; }
+.photo-wash:is(:hover, :focus-visible) img { filter: none; }
+@media (prefers-reduced-motion: reduce) { .photo-wash img, .photo-wash::after { transition: none; } }
