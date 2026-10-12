@@ -17,6 +17,8 @@ const contactIcons = contacts.some((c) => c.icon);
 // Site addition: a "credit" slot sits at the right of the legal line (both in .cg-foot-bottom); without it the markup
 // is bundle.js's.
 const hasCredit = Astro.slots.has('credit');
+// Site addition: links to other sites (the social profiles) open in a new tab.
+const external = (href: string) => (/^https?:\/\//.test(href) ? { target: '_blank', rel: 'noopener' } : {});
 ---
 <footer class:list={['cg-foot', className]}>
   <div class="cg-foot-grid">
@@ -43,8 +45,8 @@ const hasCredit = Astro.slots.has('credit');
         {social.map((s) => (
           <li>{s.href ? (
             s.icon
-              ? <a href={s.href}><span class="cg-foot-icon" aria-hidden="true"><Fragment set:html={s.icon} /></span><span class="cg-sr">{s.label}</span></a>
-              : <a href={s.href}>{s.label}</a>
+              ? <a href={s.href} {...external(s.href)}><span class="cg-foot-icon" aria-hidden="true"><Fragment set:html={s.icon} /></span><span class="cg-sr">{s.label}{external(s.href).target && ' (opens in a new tab)'}</span></a>
+              : <a href={s.href} {...external(s.href)}>{s.label}{external(s.href).target && <span class="cg-sr"> (opens in a new tab)</span>}</a>
           ) : s.label}</li>
         ))}
       </ul>
