@@ -1,0 +1,143 @@
+---
+// A floated preview: a popover in the top layer, with everything behind it dimmed by its backdrop. A button with
+// popovertarget={id} opens it; it closes on its × (focused when it opens), Esc, or a tap on the dimmed page.
+// Its controls stay with the content rather than the screen's corners: the × just above the content's top-right
+// corner. Given its neighbours in a group (see inSequence), it also steps to the previous / next preview: buttons
+// either side of the content on wider screens and in a bar under it on phones, plus the arrow keys and a sideways
+// swipe. The content shows its place ("3 of 7") with the class "lightbox-count", in a second element after the
+// piece (a Plate's caption, an essay's count line), so the steps centre on the piece itself.
+import { icon } from '../../lib/icons';
+
+interface Props {
+  id: string;
+  /** Names the preview for screen readers: the piece's or the essay's title. */
+  label: string;
+  /** The previous and next previews' ids in the group. */
+  prev?: string;
+  next?: string;
+  /** How many previews the group holds; steps show with more than one. */
+  total?: number;
+  /** What one preview is, for the steps' labels: "piece", "photo", "essay". */
+  thing?: string;
+  class?: string;
+}
+
+const { id, label, prev, next, total = 1, thing = 'item', class: className } = Astro.props;
+const close = icon('closeOutline', { size: 28 });
+const back = icon('chevronBackOutline', { size: 28 });
+const forward = icon('chevronForwardOutline', { size: 28 });
+const hasSteps = total > 1;
+---
+<div id={id} class:list={['lightbox', hasSteps && 'has-steps', className]} popover role="dialog" aria-label={label}>
+  <div class="lightbox-bar">
+    <button class="lightbox-close" type="button" popovertarget={id} popovertargetaction="hide" aria-label="Close" autofocus set:html={close} />
+  </div>
+  <div class="lightbox-main"><slot /></div>
+  {hasSteps && (
+    <div class="lightbox-steps">
+      {prev
+        ? <button class="step is-prev" type="button" popovertarget={prev} data-step="prev" aria-label={`Previous ${thing}`} set:html={back} />
+        : <span class="step is-prev is-empty" aria-hidden="true"></span>}
+      {next
+        ? <button class="step is-next" type="button" popovertarget={next} data-step="next" aria-label={`Next ${thing}`} set:html={forward} />
+        : <span class="step is-next is-empty" aria-hidden="true"></span>}
+    </div>
+  )}
+</div>
+
+<script>
+  // Previous / next: swap the open preview for its neighbour (without this script, a step button's own
+  // popovertarget opens the neighbour on top of it instead), and let the arrow keys and a sideways swipe do the
+  // same. Each preview opens scrolled to its top. When the last preview closes, focus goes back to the button on
+  // the page that opened the one last shown.
+  type Dir = 'prev' | 'next';
+  const openBox = () => document.querySelector<HTMLElement>('.lightbox.has-steps:popover-open');
+
+  function step(from: HTMLElement, dir: Dir, fromButton = false): boolean {
+    const target = from.querySelector(`[data-step="${dir}"]`)?.getAttribute('popovertarget');
+    const to = target ? document.getElementById(target) : null;
+    if (!to) return false;
+    from.hidePopover();
+    to.showPopover();
+    // Keep a keyboard user on the same button, or on the other one at the end of the group.
+    if (fromButton) (to.querySelector<HTMLElement>(`[data-step="${dir}"]`) ?? to.querySelector<HTMLElement>('[data-step]'))?.focus();
+    return true;
+  }
+
+  document.addEventListener('click', (e) => {
+    const button = (e.target as Element).closest?.('[data-step]');
+    const from = button?.closest<HTMLElement>('.lightbox');
+    if (!button || !from) return;
+    e.preventDefault();
+    step(from, button.getAttribute('data-step') as Dir, true);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const from = openBox();
+    if (!from || e.altKey || e.ctrlKey || e.metaKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    if (step(from, e.key === 'ArrowLeft' ? 'prev' : 'next')) e.preventDefault();
+  });
+
+  // Swipes are touch (or pen) only, so a mouse can still select an essay's text, and only clearly sideways ones,
+  // so scrolling an essay never steps.
+  let start: { x: number; y: number } | null = null;
+  document.addEventListener('pointerdown', (e) => {
+    start = e.pointerType !== 'mouse' && openBox()?.contains(e.target as Node) ? { x: e.clientX, y: e.clientY } : null;
+  });
+  document.addEventListener('pointercancel', () => { start = null; });
+  document.addEventListener('pointerup', (e) => {
+    const from = openBox();
+    if (!start || !from) return;
+    const dx = e.clientX - start.x, dy = e.clientY - start.y;
+    start = null;
+    // After this release has been handled: swapping during it would end the press in a different preview than
+    // it began in, which the browser takes for a tap outside and closes everything.
+    if (Math.abs(dx) > 50 && Math.abs(dx) > 2 * Math.abs(dy)) setTimeout(() => step(from, dx > 0 ? 'prev' : 'next'));
+  });
+
+  document.addEventListener('toggle', (e) => {
+    const box = e.target as HTMLElement;
+    if (!box.matches?.('.lightbox')) return;
+    if ((e as ToggleEvent).newState === 'open') {
+      box.querySelectorAll<HTMLElement>('.lightbox-main *').forEach((el) => { if (el.scrollTop) el.scrollTop = 0; });
+      return;
+    }
+    requestAnimationFrame(() => {
+      if (document.querySelector('.lightbox:popover-open')) return;
+      const opener = [...document.querySelectorAll<HTMLElement>(`[popovertarget="${box.id}"]`)].find((b) => !b.closest('.lightbox'));
+      opener?.focus();
+    });
+  }, true);
+</script>
+
+<style>
+  .lightbox { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-8)); margin: auto; padding: 0; border: 0; background: transparent; color: var(--oxblood); overflow: visible; }
+  .lightbox::backdrop { background: color-mix(in srgb, color-mix(in srgb, var(--oxblood), black 45%) 88%, transparent); }
+  /* The content's column, the × in a row above it at its right edge. */
+  .lightbox:popover-open { display: grid; grid-template-columns: auto; grid-template-areas: 'bar' 'main'; row-gap: var(--space-3); }
+  .lightbox-bar { grid-area: bar; justify-self: end; }
+  .lightbox-main { grid-area: main; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  /* Solid square buttons, so they show over the dimmed page and over a sheet alike. */
+  .lightbox-close, .step { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: var(--stroke) solid var(--on-oxblood); border-radius: var(--radius-none); background: var(--oxblood); color: var(--on-oxblood); cursor: pointer; }
+  .lightbox-close:hover, .step:hover { background: color-mix(in srgb, var(--oxblood), black 25%); }
+  /* An end of the group keeps its empty place, so the content doesn't shift. */
+  .step.is-empty { visibility: hidden; }
+  .lightbox :global(.lightbox-count) { margin: 0; font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--on-oxblood); }
+  /* With steps, wider screens: a column either side of the content for them. The content gets two rows (the piece,
+     then its caption or count) shared with it as a subgrid, so the steps centre on the piece. */
+  @media (min-width: 641px) {
+    .lightbox.has-steps:popover-open { grid-template-columns: 48px auto 48px; grid-template-areas: '. bar .' 'prev main next' '. main .'; column-gap: var(--space-4); }
+    .lightbox.has-steps .lightbox-main { display: grid; grid-template-rows: subgrid; justify-items: center; }
+    .lightbox-steps { display: contents; }
+    .step.is-prev { grid-area: prev; align-self: center; }
+    .step.is-next { grid-area: next; align-self: center; }
+  }
+  /* Phones: the steps in a bar under the content, at its two ends. */
+  @media (max-width: 640px) {
+    .lightbox { max-height: calc(100dvh - 2 * var(--space-4)); }
+    .lightbox.has-steps:popover-open { grid-template-areas: 'bar' 'main' 'steps'; }
+    .lightbox-steps { grid-area: steps; display: flex; justify-content: space-between; }
+  }
+  /* While a preview is open, the page behind it holds still. */
+  :global(html:has(.lightbox:popover-open)) { overflow: hidden; }
+</style>

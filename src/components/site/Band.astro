@@ -1,0 +1,54 @@
+---
+// One band of a section front: a ruled head (the title, a count, "See all") over its contents. Lay the
+// previews in <div class="shelf"> (4 across on desktop, 3 on tablets, 2 on phones; add "is-text" for a shelf of
+// text cards, one across on phones, or "is-works" for WorkCards, three across as on the front page).
+import { icon } from '../../lib/icons';
+
+interface Props {
+  title: string;
+  /** A count or note beside the title, e.g. "2 series · 8 pieces". */
+  meta?: string;
+  /** Where "See all" goes; left out on the full listing. */
+  href?: string;
+  level?: 2 | 3;
+  id?: string;
+}
+
+const { title, meta, href, level = 2, id } = Astro.props;
+const Tag = `h${level}` as const;
+const arrow = icon('arrowForwardOutline', { size: 16 });
+---
+<section class="band" id={id}>
+  <div class="band-head">
+    <Tag class="band-title">{title}</Tag>
+    {meta && <p class="band-meta">{meta}</p>}
+    {href && <a class="band-all" href={href}>See all<span class="cg-sr"> {title}</span><span class="band-arrow" set:html={arrow} /></a>}
+  </div>
+  <slot />
+</section>
+
+<style>
+  .band { display: flex; flex-direction: column; gap: var(--space-4); scroll-margin-top: var(--space-6); }
+  .band-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-4); padding-top: var(--space-3); border-top: var(--stroke) solid var(--rule); }
+  .band-title { flex: 1 1 auto; margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 36px; text-transform: uppercase; color: var(--press-blue); }
+  .band-meta { margin: 0; font-family: var(--font-text); font-style: italic; font-size: 15px; line-height: 22px; color: var(--oxblood); }
+  .band-all { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-text); font-weight: 700; font-size: 14px; line-height: 22px; letter-spacing: .08em; text-transform: uppercase; color: var(--press-blue-deep); text-decoration: none; white-space: nowrap; }
+  .band-all:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .band-arrow { display: inline-flex; transition: transform .15s ease; }
+  .band-all:hover .band-arrow { transform: translateX(4px); }
+  .band :global(.shelf) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+  .band :global(.shelf.is-works) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-8); }
+  .band :global(.band-dek), .band :global(.band-empty) { margin: 0; max-width: var(--measure); font-family: var(--font-text); font-style: italic; font-size: 16px; line-height: 26px; color: var(--oxblood); }
+  .band :global(.band-dek p) { margin: 0; }
+  .band :global(.band-empty) { padding: var(--space-6); max-width: none; border: var(--stroke-hair) dashed var(--rule); text-align: center; }
+  @media (max-width: 900px) {
+    .band :global(.shelf) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .band :global(.shelf.is-works) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .band :global(.shelf) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .band :global(.shelf.is-text), .band :global(.shelf.is-works) { grid-template-columns: minmax(0, 1fr); }
+    .band-title { flex-basis: 100%; font-size: 26px; line-height: 30px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .band-arrow { transition: none; } }
+</style>

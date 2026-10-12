@@ -1,0 +1,86 @@
+---
+// A gallery piece as a plate: a tile with its caption ("Pl. 3 — Asparagus"); pressing the tile floats the piece,
+// whole and as large as the screen allows, in a Lightbox. Artworks sit whole on a ruled paper mount in a 3:4 tile
+// (most are drawn at 3:4, as Instagram's grid now is); photos fill a square tile. With its shelf's neighbours
+// (see inSequence), the preview steps to the previous / next plate and shows "3 of 7" (see Lightbox).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Lightbox from './Lightbox.astro';
+
+interface Props {
+  id: string;
+  src: ImageMetadata;
+  alt: string;
+  /** Its number within the series or event. */
+  number: number;
+  /** The series or event. */
+  series: string;
+  year?: number;
+  /** The piece's own name, e.g. "Asparagus"; the series stands in without one. */
+  title?: string;
+  /** A line about the piece, shown in the preview. */
+  caption?: string;
+  /** The caption's mark before the number: "Pl." for art (default), "Photo" for documentation. */
+  mark?: string;
+  /** "art": whole on a 3:4 paper mount (default); "photo": cropped to fill a square. */
+  variant?: 'art' | 'photo';
+  /** Add the series to the tile's caption, where plates from several series sit together. */
+  showSeries?: boolean;
+  /** The previous and next plates' ids on the shelf, and this one's place on it. */
+  prev?: string;
+  next?: string;
+  position?: number;
+  total?: number;
+}
+
+const { id, src, alt, number, series, year, title, caption, mark = 'Pl.', variant = 'art', showSeries = false, prev, next, position, total = 1 } = Astro.props;
+const thing = mark === 'Photo' ? 'photo' : 'piece';
+const name = title ?? series;
+const source = [title && series, year].filter(Boolean).join(', ');
+---
+<figure class:list={['plate', `is-${variant}`]}>
+  <button class="plate-open" type="button" popovertarget={id}>
+    <Image src={src} alt={alt} widths={[300, 600]} sizes="(max-width: 640px) 50vw, (max-width: 900px) 33vw, 300px" />
+    <span class="cg-sr">(view larger)</span>
+  </button>
+  <figcaption><span class="plate-no">{mark} {number}</span> — {name}{showSeries && title && <span class="plate-series"> · {series}</span>}</figcaption>
+</figure>
+<Lightbox id={id} label={`${mark} ${number}, ${name}`} prev={prev} next={next} total={total} thing={thing} class="lightbox-plate">
+  <figure class="plate-large">
+    <Image src={src} alt={alt} widths={[800, 1200, 1600, 2000]} sizes="min(100vw, 100vh)" loading="lazy" draggable="false" />
+    <figcaption>
+      {total > 1 && <span class="lightbox-count">{position} of {total}</span>}
+      <span><span class="plate-no">{mark} {number}</span> — {name}{source && `. ${source}`}.{caption && <Fragment> <em>{caption}</em></Fragment>}</span>
+    </figcaption>
+  </figure>
+</Lightbox>
+
+<style>
+  .plate { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .plate-open { display: block; width: 100%; padding: 0; border: 0; border-radius: var(--radius-none); overflow: hidden; cursor: zoom-in; }
+  .plate-open :global(img) { display: block; width: 100%; height: 100%; transition: transform .3s ease; }
+  .plate-open:hover :global(img) { transform: scale(1.03); }
+  .is-art .plate-open { aspect-ratio: 3 / 4; background: var(--paper); outline: var(--stroke-hair) solid var(--rule); outline-offset: -1px; }
+  .is-art .plate-open :global(img) { object-fit: contain; }
+  .is-photo .plate-open { aspect-ratio: 1; background: var(--press-blue); }
+  .is-photo .plate-open :global(img) { object-fit: cover; }
+  .plate figcaption { font-family: var(--font-text); font-style: italic; font-size: 14px; line-height: 20px; color: var(--oxblood); }
+  .plate-no { font-style: normal; font-weight: 700; letter-spacing: .06em; color: var(--press-blue-deep); }
+  /* In the preview: the whole piece, never cropped, on paper (some art has transparent parts), as large as the
+     screen allows once the × row above, the caption below and (on wider screens) the steps either side have their
+     room. A sideways swipe steps (see Lightbox); pinching zooms. */
+  .plate-large { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); touch-action: pan-y pinch-zoom; }
+  .plate-large :global(img) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8) - 2 * (48px + var(--space-4))); max-height: calc(100dvh - 2 * var(--space-8) - (48px + var(--space-3)) - var(--space-16)); background: var(--paper); }
+  .plate-large figcaption { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); max-width: var(--measure); font-family: var(--font-text); font-size: 16px; line-height: 24px; text-align: center; color: var(--on-oxblood); }
+  .plate-large .plate-no { color: var(--on-oxblood); }
+  /* Wider screens: the piece and its caption on the preview's two content rows (see Lightbox), so the steps line up
+     with the piece. */
+  @media (min-width: 641px) {
+    .plate-large { display: grid; grid-row: 1 / -1; grid-template-rows: subgrid; row-gap: var(--space-4); justify-items: center; }
+  }
+  /* Phones: the piece takes the width, and the height left after the two bars and the caption. */
+  @media (max-width: 640px) {
+    .plate-large :global(img) { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-4) - 2 * (48px + var(--space-3)) - var(--space-16)); }
+  }
+  @media (prefers-reduced-motion: reduce) { .plate-open :global(img) { transition: none; } }
+</style>

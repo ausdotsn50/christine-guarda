@@ -1,0 +1,25 @@
+---
+// A section's sub-navigation, like a paper's section index strip: its pages in a row, the current one underlined.
+// A long strip wraps into centred rows on wider screens; on phones it stays one row and scrolls sideways.
+interface Props {
+  /** Names the navigation, e.g. "Personal Works". */
+  label: string;
+  items: { label: string; href: string; current?: boolean }[];
+}
+
+const { label, items } = Astro.props;
+---
+<nav class="subnav" aria-label={label}>
+  <ul>
+    {items.map((it) => <li><a href={it.href} aria-current={it.current ? 'page' : undefined}>{it.label}</a></li>)}
+  </ul>
+</nav>
+
+<style>
+  .subnav { border-bottom: var(--stroke-hair) solid var(--rule); overflow-x: auto; }
+  .subnav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2) var(--space-8); margin: 0; padding: var(--space-3) var(--space-1); list-style: none; white-space: nowrap; }
+  .subnav a { display: inline-block; padding-bottom: var(--space-1); border-bottom: var(--stroke-heavy) solid transparent; font-family: var(--font-text); font-weight: 700; font-size: 15px; line-height: 22px; letter-spacing: .1em; text-transform: uppercase; color: var(--press-blue-deep); text-decoration: none; }
+  .subnav a:hover { border-bottom-color: var(--press-blue-tint); }
+  .subnav a[aria-current] { border-bottom-color: var(--press-blue-deep); }
+  @media (max-width: 640px) { .subnav ul { flex-wrap: nowrap; justify-content: flex-start; gap: var(--space-6); } }
+</style>

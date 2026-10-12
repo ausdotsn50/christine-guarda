@@ -1,14 +1,16 @@
 ---
 // The small-screen header (under 900px, where it replaces the Masthead): the logo and a menu button on an
-// oxblood bar, after the Canva top bar. The button opens every page as a flat list in a panel from the left.
+// oxblood bar, after the Canva top bar. The button opens the main pages in a panel from the left, the Works sections
+// grouped under Works.
 // No JavaScript: the panel is a popover, so the browser opens and closes it, closes it on Esc or a tap
 // outside, and returns focus to the button.
 import { Image } from 'astro:assets';
 import { icon } from '../../lib/icons';
 import logo from '../../assets/logos/cg-white.png';
+import type { MenuItem } from '../types';
 
 interface Props {
-  items: { label: string; href: string; current: boolean }[];
+  items: MenuItem[];
 }
 
 const { items } = Astro.props;
@@ -25,7 +27,14 @@ const { items } = Astro.props;
     <Fragment set:html={icon('closeOutline', { size: 40 })} />
   </button>
   <ul>
-    {items.map((it) => <li><a href={it.href} aria-current={it.current ? 'page' : undefined}>{it.label}</a></li>)}
+    {items.map((it) => it.children ? (
+      <li class="menu-group">
+        <span class="menu-group-label">{it.label}</span>
+        <ul aria-label={it.label}>{it.children.map((c) => <li><a href={c.href} aria-current={c.current}>{c.label}</a></li>)}</ul>
+      </li>
+    ) : (
+      <li><a href={it.href} aria-current={it.current}>{it.label}</a></li>
+    ))}
   </ul>
 </nav>
 
@@ -57,8 +66,12 @@ const { items } = Astro.props;
   .menu-panel ul { list-style: none; margin: 0; padding: 0; }
   /* Muted cream for the other pages (about 5:1 on oxblood), full cream and an underline for this one. */
   .menu-panel a { display: inline-block; padding: var(--space-3) 0; font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 32px; text-transform: uppercase; text-decoration: none; color: color-mix(in srgb, var(--on-oxblood) 65%, var(--oxblood)); }
-  .menu-panel a:hover, .menu-panel a[aria-current='page'] { color: var(--on-oxblood); }
-  .menu-panel a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
+  .menu-panel a:hover, .menu-panel a[aria-current] { color: var(--on-oxblood); }
+  .menu-panel a[aria-current] { text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
+  /* Works: a heading (not a link; it has no page of its own) over its sections, indented on a cream rule. */
+  .menu-group-label { display: block; padding: var(--space-3) 0 var(--space-1); font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 32px; text-transform: uppercase; color: var(--on-oxblood); }
+  .menu-panel .menu-group ul { margin: 0 0 var(--space-2); padding-left: var(--space-4); border-left: var(--stroke) solid color-mix(in srgb, var(--on-oxblood) 45%, var(--oxblood)); }
+  .menu-panel .menu-group a { padding: var(--space-2) 0; font-size: 20px; line-height: 26px; }
 
   @media (prefers-reduced-motion: reduce) {
     .menu-panel, .menu-panel::backdrop { transition: none; }

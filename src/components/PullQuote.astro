@@ -1,0 +1,13 @@
+---
+interface Props {
+  cite?: string;
+  class?: string;
+}
+// Default slot: the quoted line, without quote marks.
+
+const { cite, class: className } = Astro.props;
+---
+<figure class:list={['cg-pull', className]}>
+  <blockquote><slot /></blockquote>
+  {cite && <figcaption>{cite}</figcaption>}
+</figure>

@@ -17,6 +17,15 @@ img, video { max-width: 100%; height: auto; }
 .site-next { display: flex; justify-content: flex-end; padding: var(--space-6) 0; border-top: var(--stroke-heavy) solid var(--rule); }
 .site-next + .cg-foot { padding-top: 0; }
 
+/* Kicker heads between paragraphs of an Article (the AURORA track titles). */
+.cg-article > h3.cg-kicker { margin: var(--space-6) 0 var(--space-2); break-after: avoid; }
+.cg-article > h3.cg-kicker:first-child { margin-top: 0; }
+/* Two-column pieces are short; keep each paragraph in one column. */
+.cg-article.is-two-col > p { break-inside: avoid; }
+
+/* A Button in a ResumeSection aside keeps its own width instead of stretching across the column. */
+.cg-resume-head > .cg-btn { align-self: flex-start; }
+
 .skip-link { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 1; padding: var(--space-2) var(--space-4); background: var(--paper); color: var(--press-blue-deep); font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transform: translateY(-200%); }
 .skip-link:focus-visible { transform: none; }
 
@@ -28,3 +37,21 @@ img, video { max-width: 100%; height: auto; }
 @media (max-width: 640px) {
   .site { padding-left: var(--page-margin-sm); padding-right: var(--page-margin-sm); }
 }
+
+/* On small phones a one-word page title ("Documentation") is wider than the screen at the xl phone
+   size (44px), so xl heads step down to the lg phone size. */
+@media (max-width: 460px) {
+  .cg-sh-xl { font-size: 34px; line-height: 38px; }
+}
+
+/* The Works link's drop-down in the Masthead: its sections in a ruled panel under the nav, shown on hover or when
+   a link in it has keyboard focus. Clipped rather than display: none when closed, so screen readers still list
+   the links and Tab moves into them (which opens it). The panel's top padding bridges the gap from the link. */
+.cg-mast-has-sub { position: relative; }
+.cg-mast-sub { position: absolute; top: 100%; left: 50%; z-index: 5; padding-top: calc(var(--space-4) + var(--stroke-heavy)); transform: translateX(-50%); clip-path: inset(50%); opacity: 0; pointer-events: none; transition: opacity .15s ease; }
+.cg-mast-has-sub:hover > .cg-mast-sub, .cg-mast-has-sub:focus-within > .cg-mast-sub { clip-path: none; opacity: 1; pointer-events: auto; }
+.cg-mast-sub ul { list-style: none; margin: 0; padding: var(--space-2) 0; background: var(--paper); border: var(--stroke) solid var(--rule); border-top: var(--stroke-heavy) solid var(--rule); }
+.cg-mast-sublink { display: block; padding: var(--space-2) var(--space-6); font-family: var(--font-text); font-weight: 700; font-size: 16px; line-height: 24px; letter-spacing: .08em; text-transform: uppercase; text-align: center; white-space: nowrap; color: var(--oxblood); text-decoration: none; }
+.cg-mast-sublink:hover { background: var(--press-blue-tint); color: var(--press-blue-deep); }
+.cg-mast-sublink[aria-current] { color: var(--press-blue-deep); text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
+@media (prefers-reduced-motion: reduce) { .cg-mast-sub { transition: none; } }

@@ -1,0 +1,28 @@
+---
+// Essays: the Personal section's flag with this tab current, then a band per group (Longer Essays, Short Essays),
+// each essay a clipping that opens in a Lightbox on a sheet, stepping through its group.
+import Base from '../../../layouts/Base.astro';
+import Band from '../../../components/site/Band.astro';
+import EssayClip from '../../../components/site/EssayClip.astro';
+import SectionFlag from '../../../components/site/SectionFlag.astro';
+import { essayGroups, personalPages, workGroups } from '../../../data/categories';
+import { countLabel, essayPreviewId, getEssays, inSequence } from '../../../lib/collections';
+
+const essays = await getEssays();
+const groups = essayGroups.map((g) => ({ ...g, essays: essays.filter((e) => e.data.group === g.key) })).filter((g) => g.essays.length > 0);
+---
+<Base title="Essays" description="Personal essays by Christine Guarda: two longer pieces, and short essays on AURORA’s songs.">
+  <SectionFlag group={workGroups.personal} pages={personalPages} current="/works/personal/essays" />
+
+  {groups.map((g) => (
+    <Band title={g.title} meta={countLabel(g.essays.length, 'essay')} id={g.key}>
+      {'dek' in g && <p class="band-dek">{g.dek}</p>}
+      <div class="shelf is-text">{inSequence(g.essays.map((e) => ({ essay: e, id: essayPreviewId(e) }))).map((x) => <EssayClip {...x} />)}</div>
+    </Band>
+  ))}
+  {groups.length === 0 && <p class="empty">Essays coming soon.</p>}
+</Base>
+
+<style>
+  .empty { margin: 0; padding: var(--space-6); border: var(--stroke-hair) dashed var(--rule); font-family: var(--font-text); font-style: italic; text-align: center; }
+</style>
