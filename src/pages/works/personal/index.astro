@@ -8,7 +8,7 @@ import EssayClip from '../../../components/site/EssayClip.astro';
 import Plate from '../../../components/site/Plate.astro';
 import SectionFlag from '../../../components/site/SectionFlag.astro';
 import { personalPages, workGroups } from '../../../data/categories';
-import { countLabel, getEssays, getGalleries, platesOf } from '../../../lib/collections';
+import { countLabel, essayPreviewId, getEssays, getGalleries, inSequence, platesOf } from '../../../lib/collections';
 
 const group = workGroups.personal;
 const series = await getGalleries('digital-art');
@@ -21,13 +21,13 @@ const essays = await getEssays();
 
   <Band title="Digital Art" meta={`${countLabel(series.length, 'series', 'series')} · ${countLabel(plates.length, 'piece')}`} href="/works/personal/digital-art">
     {plates.length > 0
-      ? <div class="shelf">{preview.map((p) => <Plate {...p} showSeries />)}</div>
+      ? <div class="shelf">{inSequence(preview).map((p) => <Plate {...p} showSeries />)}</div>
       : <p class="band-empty">Pieces coming soon.</p>}
   </Band>
 
   <Band title="Essays" meta={countLabel(essays.length, 'essay')} href="/works/personal/essays">
     {essays.length > 0
-      ? <div class="shelf is-text">{essays.slice(0, 4).map((e) => <EssayClip essay={e} />)}</div>
+      ? <div class="shelf is-text">{inSequence(essays.slice(0, 4).map((e) => ({ essay: e, id: essayPreviewId(e) }))).map((x) => <EssayClip {...x} />)}</div>
       : <p class="band-empty">Essays coming soon.</p>}
   </Band>
 </Base>

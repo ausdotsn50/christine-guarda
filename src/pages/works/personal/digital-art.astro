@@ -7,18 +7,18 @@ import Band from '../../../components/site/Band.astro';
 import Plate from '../../../components/site/Plate.astro';
 import SectionFlag from '../../../components/site/SectionFlag.astro';
 import { personalPages, workGroups } from '../../../data/categories';
-import { countLabel, getGalleries, platesOf } from '../../../lib/collections';
+import { countLabel, getGalleries, inSequence, platesOf } from '../../../lib/collections';
 
 const series = await Promise.all((await getGalleries('digital-art')).map(async (s) => ({ s, plates: platesOf(s), Content: (await render(s)).Content })));
 ---
-<Base title={`Digital Art · ${workGroups.personal.title}`} description="Digital art series by Christine Guarda.">
+<Base title="Digital Art" description="Digital art series by Christine Guarda.">
   <SectionFlag group={workGroups.personal} pages={personalPages} current="/works/personal/digital-art" />
 
   {series.map(({ s, plates, Content }) => (
     <Band title={s.data.title} meta={['Series', s.data.year, countLabel(plates.length, 'piece')].filter(Boolean).join(' · ')} id={s.id}>
       {s.body?.trim() && <div class="band-dek"><Content /></div>}
       {plates.length > 0
-        ? <div class="shelf">{plates.map((p) => <Plate {...p} />)}</div>
+        ? <div class="shelf">{inSequence(plates).map((p) => <Plate {...p} />)}</div>
         : <p class="band-empty">Pieces coming soon.</p>}
     </Band>
   ))}

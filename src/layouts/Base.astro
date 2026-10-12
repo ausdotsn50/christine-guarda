@@ -14,7 +14,7 @@ import SiteMenu from '../components/site/SiteMenu.astro';
 import { siteName, dateline, nav, navSection, contacts, social, footerNav, menuLinks, worksSections } from '../data/site';
 
 interface Props {
-  /** The page name; the document title becomes "{title} | Christine Guarda". Leave out on the front page. */
+  /** The page's own name; the document title becomes "{title} | Christine Guarda" (the name on every page, for search). */
   title?: string;
   description: string;
   image?: ImageMetadata;

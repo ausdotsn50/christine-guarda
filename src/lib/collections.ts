@@ -42,6 +42,15 @@ export function platesOf(series: Gallery) {
   return images.map((img, i) => ({ ...img, id: `plate-${series.id}-${i + 1}`, number: i + 1, series: title, year }));
 }
 
+/** Plates in the order they sit on a shelf, each with its neighbours and place, for the preview's previous /
+ *  next and its "3 of 7". */
+export function inSequence<T extends { id: string }>(items: T[]) {
+  return items.map((item, i) => ({ ...item, prev: items[i - 1]?.id, next: items[i + 1]?.id, position: i + 1, total: items.length }));
+}
+
+/** The id of an essay's preview (its Lightbox). */
+export const essayPreviewId = (essay: Essay) => `essay-${essay.id}`;
+
 export const workHref = (w: Work) => `/works/academic/${w.data.category}#${w.id}`;
 
 /** The Documentation section's pages, in its sub-navigation's order: its front, then an event page each. */
