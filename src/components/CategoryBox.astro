@@ -1,0 +1,14 @@
+---
+interface Props {
+  href?: string;
+  /** The category this page is: filled press-blue-deep. */
+  current?: boolean;
+  /** How many works sit inside, e.g. "4 works". */
+  count?: string | number;
+  class?: string;
+}
+// Default slot: the category name. Lay a set out in <div class="cg-cat-grid">.
+
+const { href, current, count, class: className } = Astro.props;
+---
+<a href={href || '#'} class:list={['cg-cat', current && 'is-current', className]} aria-current={current ? 'page' : undefined}><span><slot /></span>{count != null && <span class="cg-cat-count">{count}</span>}</a>

@@ -14,6 +14,3 @@ export function embedUrl(href: string): string {
   }
   throw new Error(`Can't embed ${href}: use a Google Drive or YouTube link.`);
 }
-
-/** Where a link opens, for its label: "Google Drive" or "YouTube". */
-export const hostName = (href: string) => (/youtu/.test(new URL(href).hostname) ? 'YouTube' : 'Google Drive');

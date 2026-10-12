@@ -1,0 +1,296 @@
+---
+// Every design-system component with the sample content from its design-system/components/<Name>/preview.html.
+// Out of the nav and the sitemap; noindex. data-specimen marks each preview's root for the markup parity check.
+import Base from '../layouts/Base.astro';
+import Masthead from '../components/Masthead.astro';
+import SectionIndex from '../components/SectionIndex.astro';
+import ContactFooter from '../components/ContactFooter.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Byline from '../components/Byline.astro';
+import Button from '../components/Button.astro';
+import ArrowLink from '../components/ArrowLink.astro';
+import CategoryBox from '../components/CategoryBox.astro';
+import WorkCard from '../components/WorkCard.astro';
+import ProjectEntry from '../components/ProjectEntry.astro';
+import AwardStamp from '../components/AwardStamp.astro';
+import Article from '../components/Article.astro';
+import PullQuote from '../components/PullQuote.astro';
+import ResumeSection from '../components/ResumeSection.astro';
+import ResumeEntry from '../components/ResumeEntry.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+
+const groups = [
+  { label: 'Navigation', items: ['Masthead', 'SectionIndex', 'ContactFooter'] },
+  { label: 'Headings', items: ['SectionHead', 'Byline'] },
+  { label: 'Actions', items: ['Button', 'ArrowLink', 'CategoryBox'] },
+  { label: 'Works', items: ['WorkCard', 'ProjectEntry', 'AwardStamp'] },
+  { label: 'Reading', items: ['Article', 'PullQuote'] },
+  { label: 'About', items: ['ResumeSection', 'ResumeEntry', 'ArchFrame'] },
+];
+const anchor = (name: string) => name.toLowerCase();
+const toc = groups.map((g) => ({ label: g.label, items: g.items.map((name) => ({ label: name, href: `#${anchor(name)}` })) }));
+---
+<Base title="Styleguide" description="Every component of the Christine Guarda Portfolio design system, with its sample content." noindex bare>
+  <SectionHead variant="leaders" level={1} dek="Each component of the design system, rendered with the sample content from its preview.">Styleguide</SectionHead>
+
+  <nav class="sg-toc" aria-label="Components">
+    {toc.map((g) => (
+      <div>
+        <p class="cg-kicker">{g.label}</p>
+        <ul>{g.items.map((it) => <li><a href={it.href}>{it.label}</a></li>)}</ul>
+      </div>
+    ))}
+  </nav>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">Navigation</SectionHead>
+
+    <article class="sg-specimen" id="masthead">
+      <h3 class="cg-kicker">Masthead</h3>
+      <p class="sg-sub">Top bar, split nav around the monogram</p>
+      <div class="sg-demo sg-bleed" data-specimen="Masthead">
+        <Masthead
+          edition="Portfolio"
+          links={[
+            { label: 'Home', href: '#' },
+            { label: 'About', href: '#' },
+            { label: 'Works', href: '#', active: true },
+            { label: 'Contact', href: '#' },
+          ]}
+        >
+          <Fragment slot="bar-mark">CG</Fragment>
+          <Fragment slot="monogram">CG</Fragment>
+        </Masthead>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="sectionindex">
+      <h3 class="cg-kicker">SectionIndex</h3>
+      <p class="sg-sub">Replaces the repeated See More Works block</p>
+      <div class="sg-demo" data-specimen="SectionIndex">
+        <SectionIndex groups={[
+          { label: 'Academic & University', items: [
+            { label: 'Film & Video' }, { label: 'Radio & Broadcast', current: true }, { label: 'Editorial & Publishing' },
+            { label: 'Scripts & Stage' }, { label: 'Campaigns, Advertising & PR' }, { label: 'Visual & Brand Design' } ] },
+          { label: 'Personal', items: [ { label: 'Digital Art' }, { label: 'Essays' } ] },
+          { label: 'Documentation', items: [
+            { label: 'University Productions' }, { label: 'Academic-Related Productions' },
+            { label: 'UST-Legazpi Talastas' }, { label: 'Philippine Student Quill Awards' } ] },
+        ]} />
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="contactfooter">
+      <h3 class="cg-kicker">ContactFooter</h3>
+      <p class="sg-sub">Title plus three ruled columns, legal line under</p>
+      <div class="sg-demo sg-flush-top" data-specimen="ContactFooter">
+        <ContactFooter
+          contacts={[ { label: 'Personal email', href: '#' }, { label: 'School email', href: '#', note: 'UST–Legazpi' }, { label: 'Phone', href: '#' } ]}
+          social={[ { label: 'LinkedIn', href: '#' }, { label: 'Instagram', href: '#' }, { label: 'Facebook', href: '#' } ]}
+          nav={[ { label: 'Home', href: '#' }, { label: 'About', href: '#' }, { label: 'Works', href: '#' }, { label: 'Contact', href: '#' } ]}
+        />
+      </div>
+    </article>
+  </section>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">Headings</SectionHead>
+
+    <article class="sg-specimen" id="sectionhead">
+      <h3 class="cg-kicker">SectionHead</h3>
+      <p class="sg-sub">Leaders (page title), ruled (section), split (home sections). The preview's leaders head is an h1; here it is an h2, as the page already has one.</p>
+      <div class="sg-demo sg-stack" data-specimen="SectionHead">
+        <SectionHead variant="leaders" level={2} dek="A selection of my work across projects and experiences: the ideas, the skills, and the areas I keep growing in.">My works</SectionHead>
+        <SectionHead variant="ruled" dek="Writing, production, and design work from my BA Communication coursework and university involvements.">Academic &amp; University Works</SectionHead>
+        <SectionHead variant="split" dek="Stories, publications, and productions that shaped my work in communication.">Featured works</SectionHead>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="byline">
+      <h3 class="cg-kicker">Byline</h3>
+      <p class="sg-sub">Credits under a project title</p>
+      <div class="sg-demo sg-column" data-specimen="Byline">
+        <Byline items={[{ label: 'Role', value: 'Writer' }, { label: 'Format', value: 'Short documentary' }, { label: 'Year', value: '2025' }]} />
+        <Byline kicker="Film & Video" items={[{ label: 'Role', value: 'Director, Writer, Supporting Actor, Poster Designer' }, { label: 'Course', value: 'Development Communication' }]} />
+      </div>
+    </article>
+  </section>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">Actions</SectionHead>
+
+    <article class="sg-specimen" id="button">
+      <h3 class="cg-kicker">Button</h3>
+      <p class="sg-sub">Solid (once per view), outline, small</p>
+      <div class="sg-demo sg-row" data-specimen="Button">
+        <Button variant="solid">Read more</Button>
+        <Button variant="outline">Explore my work</Button>
+        <Button variant="outline" size="sm">Read full script</Button>
+        <Button variant="solid" size="sm">Download resume</Button>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="arrowlink">
+      <h3 class="cg-kicker">ArrowLink</h3>
+      <p class="sg-sub">Inline, and stacked for page-to-page Return / Next</p>
+      <div class="sg-demo sg-spread" data-specimen="ArrowLink">
+        <ArrowLink direction="back" stacked href="#">Return</ArrowLink>
+        <ArrowLink href="#">View project</ArrowLink>
+        <ArrowLink stacked href="#">Next</ArrowLink>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="categorybox">
+      <h3 class="cg-kicker">CategoryBox</h3>
+      <p class="sg-sub">In a cg-cat-grid; current category filled</p>
+      <div class="sg-demo cg-cat-grid" data-specimen="CategoryBox">
+        <CategoryBox count="4 works">Film &amp; Video</CategoryBox>
+        <CategoryBox count="3 works" current>Radio &amp; Broadcast</CategoryBox>
+        <CategoryBox count="5 works">Editorial &amp; Publishing</CategoryBox>
+        <CategoryBox count="2 works">Scripts &amp; Stage</CategoryBox>
+        <CategoryBox count="3 works">Campaigns, Advertising &amp; PR</CategoryBox>
+        <CategoryBox count="4 works">Visual &amp; Brand Design</CategoryBox>
+      </div>
+    </article>
+  </section>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">Works</SectionHead>
+
+    <article class="sg-specimen" id="workcard">
+      <h3 class="cg-kicker">WorkCard</h3>
+      <p class="sg-sub">Three-up in a cg-work-grid, award kicker above the title</p>
+      <div class="sg-demo cg-work-grid" data-specimen="WorkCard">
+        <WorkCard title="Reframe" medium="Magazine" role="Managing Editor" award="Quill Awards - Excellence" />
+        <WorkCard title="Sa Totoo Lang" medium="Radio" role="Head Writer" award="Quill Awards - Excellence" />
+        <WorkCard title="Hearth" medium="Documentary" role="Writer" award="Quill Awards - Excellence" />
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="projectentry">
+      <h3 class="cg-kicker">ProjectEntry</h3>
+      <p class="sg-sub">Kicker, quoted title, byline, award, actions</p>
+      <div class="sg-demo sg-inline" data-specimen="ProjectEntry">
+        <ProjectEntry
+          kicker="Radio & Broadcast"
+          title="Sa Totoo Lang"
+          credits={[
+            { label: 'Role', value: 'Head Writer' },
+            { label: 'Format', value: 'Radio magazine' },
+            { label: 'Course', value: 'Broadcasting and Radio Principles and Practices' },
+          ]}
+        >
+          <p>A radio magazine on current national issues, written and produced as a midterm requirement. I led the writing as Head Writer.</p>
+          <AwardStamp slot="award" level="Excellence Award" event="11th Philippine Student Quill Awards" category="Division 4: Audio-Visual (Category 22) - Division 1: Media Relations (Category 9)" />
+          <Fragment slot="actions">
+            <Button variant="solid" size="sm" href="#">Listen to full audio</Button>
+            <Button variant="outline" size="sm" href="#">Read full script</Button>
+          </Fragment>
+        </ProjectEntry>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="awardstamp">
+      <h3 class="cg-kicker">AwardStamp</h3>
+      <p class="sg-sub">Excellence and Merit, set like a press clipping</p>
+      <div class="sg-demo sg-row sg-top" data-specimen="AwardStamp">
+        <AwardStamp level="Excellence Award" event="11th Philippine Student Quill Awards" category="Division 4: Publications (Category 24)" />
+        <AwardStamp level="Merit Award" event="11th Philippine Student Quill Awards" category="Division 4: Audio-Visual (Category 22)" />
+      </div>
+    </article>
+  </section>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">Reading</SectionHead>
+
+    <article class="sg-specimen" id="article">
+      <h3 class="cg-kicker">Article</h3>
+      <p class="sg-sub">Drop cap; two ruled columns for short pieces</p>
+      <div class="sg-demo" data-specimen="Article">
+        <Article columns={2}>
+          <p>Let there be light, and let there be darkness. Allow both things to exist accordingly, and make yourself appreciate the beauty of the overlooked.</p>
+          <p>Let your sight perceive the beauty of tiny objects and mundane activities. Nothing is unworthy of attention: the leaves, the dust, the half-emptied cup.</p>
+          <p>In the grand scheme of things, the tiniest bit is as significant as the largest, for everything has its purpose, and everything matters.</p>
+        </Article>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="pullquote">
+      <h3 class="cg-kicker">PullQuote</h3>
+      <p class="sg-sub">Breaks a long essay; one per essay</p>
+      <div class="sg-demo sg-inline" data-specimen="PullQuote">
+        <PullQuote cite="From “Everything Matters”">Everything has its purpose, and everything matters.</PullQuote>
+      </div>
+    </article>
+  </section>
+
+  <section class="sg-group">
+    <SectionHead variant="ruled" size="md">About</SectionHead>
+
+    <article class="sg-specimen" id="resumesection">
+      <h3 class="cg-kicker">ResumeSection</h3>
+      <p class="sg-sub">Heading column, vertical rule, entries</p>
+      <div class="sg-demo" data-specimen="ResumeSection">
+        <ResumeSection heading="Education">
+          <ResumeEntry title="University of Santo Tomas – Legazpi" meta="Bachelor of Arts in Communication - Expected graduation: 2027" />
+        </ResumeSection>
+        <ResumeSection heading="Relevant experience">
+          <Button slot="aside" variant="outline" size="sm" href="#">View my works</Button>
+          <ResumeEntry title="Radyo Tomasino/Radio 107.5 FM — Head Writer" meta="A.Y. 2025–2026">
+            <p>Led junior writers, developed and edited scripts, and supported live broadcast operations.</p>
+          </ResumeEntry>
+          <ResumeEntry title="UST-Legazpi Talastas — Finance Officer" meta="A.Y. 2024–2025 | A.Y. 2025–2026">
+            <p>Prepared budget proposals, kept financial records, and coordinated event requirements with university offices.</p>
+          </ResumeEntry>
+          <ResumeEntry title="University Media & Productions — Production & Technical Team" meta="2023 – Present">
+            <p>About 20 productions across production assistance, scoring, stage management, and technical support.</p>
+          </ResumeEntry>
+        </ResumeSection>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="resumeentry">
+      <h3 class="cg-kicker">ResumeEntry</h3>
+      <p class="sg-sub">One entry; inside a ResumeSection they are ruled apart</p>
+      <div class="sg-demo" data-specimen="ResumeEntry">
+        <ResumeEntry title="Radyo Tomasino/Radio 107.5 FM — Head Writer" meta="A.Y. 2025–2026">
+          <p>Led junior writers, developed and edited scripts, and supported live broadcast operations: teleprompter, timer, host cueing, and content management.</p>
+        </ResumeEntry>
+      </div>
+    </article>
+
+    <article class="sg-specimen" id="archframe">
+      <h3 class="cg-kicker">ArchFrame</h3>
+      <p class="sg-sub">The blue arch behind a cutout portrait (portrait not included)</p>
+      <div class="sg-demo sg-center" data-specimen="ArchFrame">
+        <ArchFrame>
+          <p class="slot">Cutout portrait (transparent PNG) sits here and rises above the arch</p>
+        </ArchFrame>
+      </div>
+    </article>
+  </section>
+</Base>
+
+<style>
+  .sg-toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-6); padding: var(--space-4) 0; border-top: var(--stroke-heavy) solid var(--rule); border-bottom: var(--stroke-heavy) solid var(--rule); }
+  .sg-toc ul { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+  .sg-toc a { font-size: 16px; line-height: 28px; color: var(--oxblood); text-decoration: none; }
+  .sg-toc a:hover { color: var(--press-blue-deep); text-decoration: underline; }
+  .sg-group > * + * { margin-top: var(--space-12); }
+  .sg-specimen { scroll-margin-top: var(--space-6); }
+  .sg-sub { margin: var(--space-1) 0 0; padding-bottom: var(--space-2); border-bottom: var(--stroke-hair) solid var(--rule); font-family: var(--font-text); font-style: italic; font-size: 14px; line-height: 20px; }
+
+  /* The preview.html wrappers. */
+  .sg-demo { padding: var(--space-6); }
+  .sg-bleed { padding: 0; }
+  .sg-flush-top { padding: 0 var(--space-6) var(--space-6); }
+  .sg-inline { padding: 0 var(--space-6); }
+  .sg-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  .sg-row.sg-top { align-items: flex-start; gap: var(--space-6); }
+  .sg-spread { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+  .sg-stack { display: flex; flex-direction: column; gap: var(--space-12); }
+  .sg-column { display: flex; flex-direction: column; gap: var(--space-6); }
+  .sg-center { display: flex; justify-content: center; }
+  .sg-center :global(.cg-arch) { width: 300px; }
+  .slot { margin: 0 0 18%; padding: var(--space-2) var(--space-3); border: var(--stroke) dashed var(--paper); color: var(--paper); font-family: var(--font-text); font-style: italic; font-size: 16px; line-height: 22px; text-align: center; }
+</style>

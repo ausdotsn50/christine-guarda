@@ -53,10 +53,8 @@ const works = defineCollection({
         .default([]),
       /** The poster, opened in a Lightbox from a pill. */
       poster: z.object({ src: image(), alt: z.string(), credit: z.string().optional() }).optional(),
-      links: z
-        .array(z.object({ label: z.string(), href: z.string(), primary: z.boolean().default(false) }))
-        .default([])
-        .refine((links) => links.filter((l) => l.primary).length <= 1, 'At most one primary link per work.'),
+      /** Other links (the full magazine, an article, a presentation), as pills that open in a new tab. */
+      links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
     }),
 });
 

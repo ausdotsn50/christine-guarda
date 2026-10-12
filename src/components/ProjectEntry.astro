@@ -1,0 +1,38 @@
+---
+import Byline from './Byline.astro';
+import type { BylineItem } from './types';
+
+interface Props {
+  /** Shown in curly quotes and italic display; don't add quotes yourself. */
+  title: string;
+  /** The category, e.g. "Radio & Broadcast". */
+  kicker?: string;
+  /** Rendered as a Byline. */
+  credits?: BylineItem[];
+  /** Caption under the media. */
+  caption?: string;
+  class?: string;
+}
+// Default slot: the description, one or two <p>.
+// Slots: "award" (an <AwardStamp>), "actions" (small Buttons, in a <Fragment slot="actions">),
+// "media" (an image, video poster or set of spreads, full width under the text).
+
+const { title, kicker, credits, caption, class: className } = Astro.props;
+// Rendered up front so a slot filled conditionally ({cond && <Fragment slot="media">…}) but empty
+// leaves out its wrapper; Astro.slots.has() alone is true for it.
+const actions = Astro.slots.has('actions') ? (await Astro.slots.render('actions')).trim() : '';
+const media = Astro.slots.has('media') ? (await Astro.slots.render('media')).trim() : '';
+---
+<article class:list={['cg-project', className]}>
+  <header class="cg-project-head">
+    {kicker && <p class="cg-kicker">{kicker}</p>}
+    <h3 class="cg-project-title">“{title}”</h3>
+  </header>
+  <div class="cg-project-body">
+    {credits?.length ? <Byline items={credits} /> : null}
+    <div class="cg-project-text"><slot /></div>
+    <slot name="award" />
+    {actions && <div class="cg-project-actions"><Fragment set:html={actions} /></div>}
+  </div>
+  {media && <figure class="cg-project-media"><Fragment set:html={media} />{caption && <figcaption>{caption}</figcaption>}</figure>}
+</article>

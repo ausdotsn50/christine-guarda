@@ -17,9 +17,6 @@ img, video { max-width: 100%; height: auto; }
 .site-next { display: flex; justify-content: flex-end; padding: var(--space-6) 0; border-top: var(--stroke-heavy) solid var(--rule); }
 .site-next + .cg-foot { padding-top: 0; }
 
-/* Kicker heads between paragraphs of an Article (the AURORA track titles). */
-.cg-article > h3.cg-kicker { margin: var(--space-6) 0 var(--space-2); break-after: avoid; }
-.cg-article > h3.cg-kicker:first-child { margin-top: 0; }
 /* Two-column pieces are short; keep each paragraph in one column. */
 .cg-article.is-two-col > p { break-inside: avoid; }
 

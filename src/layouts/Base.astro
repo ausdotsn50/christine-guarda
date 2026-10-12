@@ -11,7 +11,7 @@ import defaultShareImage from '../assets/christine/og.jpg';
 import Masthead from '../components/Masthead.astro';
 import ContactFooter from '../components/ContactFooter.astro';
 import SiteMenu from '../components/site/SiteMenu.astro';
-import { siteName, dateline, nav, navSection, contacts, social, footerNav, menuLinks, worksSections } from '../data/site';
+import { siteName, nav, navSection, contacts, social, footerNav, menuLinks, worksSections } from '../data/site';
 
 interface Props {
   /** The page's own name; the document title becomes "{title} | Christine Guarda" (the name on every page, for search). */
@@ -74,7 +74,7 @@ const ogImage = site ? new URL(share.src, site).href : undefined;
     <a class="skip-link" href="#main">Skip to content</a>
     {!bare && <SiteMenu items={menuLinks(Astro.url.pathname)} />}
     {!bare && (
-      <Masthead class="site-mast" links={links} dateline={dateline} homeHref="/" topBar={false}>
+      <Masthead class="site-mast" links={links} homeHref="/" topBar={false}>
         <Fragment slot="monogram"><Image src={logo} alt="" width={112} loading="eager" /></Fragment>
       </Masthead>
     )}

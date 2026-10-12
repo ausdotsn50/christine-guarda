@@ -12,7 +12,6 @@ const linkedinIcon = icon('logoLinkedin');
 
 export const siteName = 'Christine Guarda';
 
-export const dateline = 'UST–Legazpi · AB Communication · Class of 2027';
 
 export type Section = 'home' | 'about' | 'works' | 'contact';
 

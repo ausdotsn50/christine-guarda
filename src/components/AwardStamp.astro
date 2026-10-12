@@ -1,0 +1,18 @@
+---
+interface Props {
+  /** "Excellence Award" (default) or "Merit Award". */
+  level?: string;
+  /** e.g. "11th Philippine Student Quill Awards". */
+  event?: string;
+  /** Division and category as the award states them. */
+  category?: string;
+  class?: string;
+}
+
+const { level, event, category, class: className } = Astro.props;
+---
+<aside class:list={['cg-award', className]} aria-label="Award">
+  <p class="cg-award-level">{level || 'Excellence Award'}</p>
+  {event && <p class="cg-award-event">{event}</p>}
+  {category && <p class="cg-award-cat">{category}</p>}
+</aside>

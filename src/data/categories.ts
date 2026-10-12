@@ -17,22 +17,19 @@ export function categoryLabel(slug: CategorySlug): string {
   return categories.find((c) => c.slug === slug)!.label;
 }
 
-/** The three groups of the Works index, each a lettered section with its own front page; deks from the Canva Works page. */
+/** The three Works sections, each with its own front page; deks from the Canva Works page. */
 export const workGroups = {
   academic: {
-    letter: 'A',
     title: 'Academic & University Works',
     href: '/works/academic',
     dek: 'Writing, production, and design work from my BA Communication coursework and university involvements.',
   },
   personal: {
-    letter: 'B',
     title: 'Personal Works',
     href: '/works/personal',
     dek: 'Creative projects, personal experiments, and ideas developed beyond academic requirements.',
   },
   documentation: {
-    letter: 'C',
     title: 'Documentations',
     href: '/works/documentation',
     dek: 'Photographs, behind-the-scenes moments, and visual records of my projects and experiences.',
@@ -53,8 +50,6 @@ export const documentationSections = [
   { slug: 'ust-legazpi-talastas', title: 'UST-Legazpi Talastas' },
   { slug: 'philippine-student-quill-awards', title: 'Philippine Student Quill Awards' },
 ] as const;
-
-export type DocumentationSection = (typeof documentationSections)[number]['slug'];
 
 /** The Documentation section's pages, in its sub-navigation's order: its front, then a page per heading. */
 export const documentationPages = [
