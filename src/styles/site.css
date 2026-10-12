@@ -79,3 +79,17 @@ img, video { max-width: 100%; height: auto; }
 .cg-foot-credit { margin: 0; font-family: var(--font-text); font-size: 13px; line-height: 18px; color: var(--oxblood); }
 .cg-foot-credit a { font-weight: 700; color: var(--press-blue-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .cg-foot-credit a:hover { text-decoration-thickness: var(--stroke); }
+
+/* Reveal on scroll: content blocks fade in and rise a little the first time they come into view (the script and the
+   "reveal-on" class are in Base.astro). Without JavaScript, or with a reduced-motion preference, the class is never
+   set and everything shows as it is. Tiles in a row start one after another, left to right. Keep this list in step
+   with the script's. */
+.reveal-on :is(.intro, .featured .cg-sh, .featured-more, .resume .cg-resume, .skills .cg-sh, .skill, .band-head, .band-dek, .plate, .clip, .cg-work, .entry) { transition: opacity .6s ease-out var(--reveal-delay, 0ms), translate .6s ease-out var(--reveal-delay, 0ms); }
+.reveal-on :is(.intro, .featured .cg-sh, .featured-more, .resume .cg-resume, .skills .cg-sh, .skill, .band-head, .band-dek, .plate, .clip, .cg-work, .entry):not(.is-revealed) { opacity: 0; translate: 0 var(--space-6); }
+/* Counted among the tiles only (each plate and clipping is followed by its Lightbox). Rows of four; work cards sit
+   three to a row. */
+:is(.plate, .clip, .skill):nth-child(4n + 2 of .plate, .clip, .skill) { --reveal-delay: 90ms; }
+:is(.plate, .clip, .skill):nth-child(4n + 3 of .plate, .clip, .skill) { --reveal-delay: 180ms; }
+:is(.plate, .clip, .skill):nth-child(4n + 4 of .plate, .clip, .skill) { --reveal-delay: 270ms; }
+.cg-work:nth-child(3n + 2 of .cg-work) { --reveal-delay: 90ms; }
+.cg-work:nth-child(3n + 3 of .cg-work) { --reveal-delay: 180ms; }

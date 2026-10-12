@@ -24,8 +24,9 @@ export const socials = [
   { label: 'LinkedIn', href: '#' },
 ];
 
-/** Her resume, a PDF in public/. */
+/** Her resume, a PDF in public/, and the name it saves under. The CG logo and Contact's button download it. */
 export const resumeHref = '/christine-guarda-resume.pdf';
+export const resumeFileName = 'Christine-Guarda-Resume.pdf';
 
 /** The front page's "A little about me". */
 export const aboutShort =

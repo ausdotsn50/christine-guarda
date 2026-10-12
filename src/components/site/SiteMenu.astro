@@ -1,12 +1,13 @@
 ---
-// The small-screen header (under 900px, where it replaces the Masthead): the logo and a menu button on an
-// oxblood bar, after the Canva top bar. The button opens the main pages in a panel from the left, the Works sections
-// grouped under Works.
+// The small-screen header (under 900px, where it replaces the Masthead): the logo (which downloads the resume) and a
+// menu button on an oxblood bar, after the Canva top bar. The button opens the main pages in a panel from the left,
+// the Works sections grouped under Works.
 // No JavaScript: the panel is a popover, so the browser opens and closes it, closes it on Esc or a tap
 // outside, and returns focus to the button.
 import { Image } from 'astro:assets';
 import { icon } from '../../lib/icons';
 import logo from '../../assets/logos/cg-white.png';
+import { resumeFileName, resumeHref } from '../../data/profile';
 import type { MenuItem } from '../types';
 
 interface Props {
@@ -16,7 +17,7 @@ interface Props {
 const { items } = Astro.props;
 ---
 <header class="menu-bar">
-  <a class="menu-logo" href="/" aria-label="Home"><Image src={logo} alt="" width={112} loading="eager" /></a>
+  <a class="menu-logo" href={resumeHref} download={resumeFileName} aria-label="Download resume (PDF)" title="Download resume (PDF)"><Image src={logo} alt="" width={112} loading="eager" /></a>
   <button class="menu-button" type="button" popovertarget="site-menu" aria-label="Open menu">
     <Fragment set:html={icon('menuOutline', { size: 40 })} />
   </button>

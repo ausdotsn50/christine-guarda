@@ -12,6 +12,7 @@ import Masthead from '../components/Masthead.astro';
 import ContactFooter from '../components/ContactFooter.astro';
 import SiteMenu from '../components/site/SiteMenu.astro';
 import { siteName, nav, navSection, contacts, social, footerNav, menuLinks, worksSections, legal, credit } from '../data/site';
+import { resumeFileName, resumeHref } from '../data/profile';
 
 interface Props {
   /** The page's own name; the document title becomes "{title} | Christine Guarda" (the name on every page, for search). */
@@ -69,12 +70,17 @@ const ogImage = site ? new URL(share.src, site).href : undefined;
     {ogImage && <meta property="og:image:alt" content={imageAlt} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="generator" content={Astro.generator} />
+    <!-- Reveal on scroll (styles in site.css): only with JavaScript and without a reduced-motion preference does the
+         page start its blocks hidden; set before the first paint, so nothing flashes. -->
+    <script is:inline>
+      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('reveal-on');
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     {!bare && <SiteMenu items={menuLinks(Astro.url.pathname)} />}
     {!bare && (
-      <Masthead class="site-mast" links={links} homeHref="/" topBar={false}>
+      <Masthead class="site-mast" links={links} homeHref={resumeHref} homeLabel="Download resume (PDF)" homeDownload={resumeFileName} topBar={false}>
         <Fragment slot="monogram"><Image src={logo} alt="" width={112} loading="eager" /></Fragment>
       </Masthead>
     )}
@@ -87,5 +93,14 @@ const ogImage = site ? new URL(share.src, site).href : undefined;
           <p slot="credit" class="cg-foot-credit">{credit.label} <a href={credit.href} target="_blank" rel="noopener">{credit.name}<span class="cg-sr"> (opens in a new tab)</span></a></p>
         </ContactFooter>}
     </div>
+    <!-- Reveal on scroll: each block is shown once, as it first comes into view. Inline, so it can't fail to load. -->
+    <script is:inline>
+      if (document.documentElement.classList.contains('reveal-on')) {
+        const seen = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-revealed'); seen.unobserve(e.target); }
+        }, { rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('.intro, .featured .cg-sh, .featured-more, .resume .cg-resume, .skills .cg-sh, .skill, .band-head, .band-dek, .plate, .clip, .cg-work, .entry').forEach((el) => seen.observe(el));
+      }
+    </script>
   </body>
 </html>
