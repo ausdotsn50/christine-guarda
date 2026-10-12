@@ -1,0 +1,40 @@
+---
+// An essay's rendered Markdown inside an Article, with its PullQuote after the second paragraph.
+// The paragraphs stay direct children of the Article, so the drop cap still applies. ::first-letter takes an
+// apostrophe after the letter with it ("I’" of "I’m"), so an essay opening on a contraction gets its initial as a
+// span instead, styled like the drop cap.
+import Article from '../Article.astro';
+import PullQuote from '../PullQuote.astro';
+import type { Essay } from '../../lib/collections';
+
+interface Props {
+  essay: Essay;
+}
+
+const { essay } = Astro.props;
+const { title, pullQuote, columns } = essay.data;
+const html = essay.rendered?.html ?? '';
+
+function splitAfterParagraph(source: string, n: number): [string, string] {
+  let end = -1;
+  for (let i = 0; i < n; i++) {
+    end = source.indexOf('</p>', end + 1);
+    if (end === -1) return [source, ''];
+  }
+  return [source.slice(0, end + 4), source.slice(end + 4)];
+}
+
+const [opening, after] = pullQuote ? splitAfterParagraph(html, 2) : [html, ''];
+const opensOnContraction = /^<p>\p{L}['’]/u.test(opening);
+const before = opensOnContraction ? opening.replace(/^<p>(\p{L})/u, '<p><span class="essay-initial">$1</span>') : opening;
+---
+<Article columns={columns} dropCap={!opensOnContraction}>
+  <Fragment set:html={before} />
+  {pullQuote && <PullQuote cite={`From “${title}”`}>{pullQuote}</PullQuote>}
+  <Fragment set:html={after} />
+</Article>
+
+<style>
+  /* The drop cap's look (from the design system's ::first-letter), as a float whose box spans three 30px lines. */
+  :global(.essay-initial) { float: left; height: 64px; margin: 6px var(--space-2) 0 0; font-family: var(--font-display); font-weight: 700; font-size: 84px; line-height: 64px; color: var(--press-blue); }
+</style>

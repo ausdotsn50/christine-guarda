@@ -1,0 +1,25 @@
+---
+// The top of a Works section's pages: its flag (kicker "Section B · Works", its title between heavy rules, its
+// dek) and its sub-navigation, the current page underlined. On a sub-page the h1 also names the page for screen
+// readers ("Personal Works: Essays").
+import SectionHead from '../SectionHead.astro';
+import SubNav from './SubNav.astro';
+
+interface Props {
+  group: { letter: string; title: string; dek: string };
+  pages: { label: string; href: string }[];
+  current: string;
+}
+
+const { group, pages, current } = Astro.props;
+const page = pages.find((p) => p.href === current);
+const isFront = page === pages[0];
+---
+<header class="section-flag">
+  <SectionHead variant="ruled" size="xl" level={1} kicker={`Section ${group.letter} · Works`} dek={group.dek}>{group.title}{!isFront && page && <span class="cg-sr">: {page.label}</span>}</SectionHead>
+  <SubNav label={group.title} items={pages.map((p) => ({ ...p, current: p.href === current }))} />
+</header>
+
+<style>
+  .section-flag { display: flex; flex-direction: column; gap: var(--space-6); }
+</style>

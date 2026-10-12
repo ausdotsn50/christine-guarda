@@ -1,0 +1,30 @@
+---
+// A floated preview: a popover in the top layer, with everything behind it dimmed by its backdrop. A button with
+// popovertarget={id} opens it; it closes on its × (focused when it opens), Esc, or a click on the dimmed page,
+// and focus returns to the button. No JavaScript: the browser's popover does all of it.
+import { icon } from '../../lib/icons';
+
+interface Props {
+  id: string;
+  /** Names the preview for screen readers: the piece's or the essay's title. */
+  label: string;
+  class?: string;
+}
+
+const { id, label, class: className } = Astro.props;
+const close = icon('closeOutline', { size: 28 });
+---
+<div id={id} class:list={['lightbox', className]} popover role="dialog" aria-label={label}>
+  <button class="lightbox-close" type="button" popovertarget={id} popovertargetaction="hide" aria-label="Close" autofocus set:html={close} />
+  <slot />
+</div>
+
+<style>
+  .lightbox { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-8)); margin: auto; padding: 0; border: 0; background: transparent; color: var(--oxblood); overflow: visible; }
+  .lightbox::backdrop { background: color-mix(in srgb, color-mix(in srgb, var(--oxblood), black 45%) 88%, transparent); }
+  /* Solid, so it shows over the dimmed page and over a sheet alike. */
+  .lightbox-close { position: fixed; top: var(--space-4); right: var(--space-4); z-index: 1; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: var(--stroke) solid var(--on-oxblood); border-radius: var(--radius-none); background: var(--oxblood); color: var(--on-oxblood); cursor: pointer; }
+  .lightbox-close:hover { background: color-mix(in srgb, var(--oxblood), black 25%); }
+  /* While a preview is open, the page behind it holds still. */
+  :global(html:has(.lightbox:popover-open)) { overflow: hidden; }
+</style>

@@ -11,7 +11,7 @@ import defaultShareImage from '../assets/christine/og.jpg';
 import Masthead from '../components/Masthead.astro';
 import ContactFooter from '../components/ContactFooter.astro';
 import SiteMenu from '../components/site/SiteMenu.astro';
-import { siteName, dateline, nav, navSection, contacts, social, footerNav, menuLinks } from '../data/site';
+import { siteName, dateline, nav, navSection, contacts, social, footerNav, menuLinks, worksSections } from '../data/site';
 
 interface Props {
   /** The page name; the document title becomes "{title} | Christine Guarda". Leave out on the front page. */
@@ -30,7 +30,13 @@ const { title, description, image = defaultShareImage, imageAlt = 'Christine Gua
 
 const docTitle = title ? `${title} | ${siteName}` : `${siteName} | Portfolio`;
 const current = navSection(Astro.url.pathname);
-const links = nav.map(({ section, label, href }) => ({ label, href, active: section === current }));
+const path = Astro.url.pathname.replace(/\/+$/, '');
+const links = nav.map(({ section, label, href }) => ({
+  label,
+  href,
+  active: section === current,
+  items: section === 'works' ? worksSections.map((s) => ({ ...s, active: path === s.href || path.startsWith(s.href + '/') })) : undefined,
+}));
 
 const site = Astro.site;
 const canonical = site ? new URL(Astro.url.pathname, site).href : undefined;

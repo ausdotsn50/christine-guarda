@@ -1,0 +1,18 @@
+---
+import type { BylineItem } from './types';
+
+interface Props {
+  /** Label/value pairs: Role, Course, Format, Year. */
+  items: BylineItem[];
+  kicker?: string;
+  class?: string;
+}
+
+const { items = [], kicker, class: className } = Astro.props;
+---
+<p class:list={['cg-byline', className]}>
+  {kicker && <span class="cg-kicker">{kicker}</span>}
+  {items.map((it) => (
+    <span class="cg-byline-item">{it.label && <span class="cg-byline-label">{`${it.label} `}</span>}<span class="cg-byline-value">{it.value}</span></span>
+  ))}
+</p>
