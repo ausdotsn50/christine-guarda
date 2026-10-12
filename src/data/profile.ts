@@ -1,11 +1,9 @@
 import type { IconName } from '../lib/icons';
 import type { CategorySlug } from './categories';
 
-// The tagline, emails, phone and the front page's "A little about me" come from the Canva home page
-// (src/assets/CHRISTINE GUARDA PORTFOLIO/HOME.jpg); the resume entries from the design-system previews.
-// The About page's summary, bio and "The rest of me" come from the Canva About page (ABOUT.jpg).
-// The skills are the Canva About page's.
-// PLACEHOLDER: the social profile URLs and resume link are still dummy text.
+// The tagline, emails, phone and the front page's "A little about me" come from Christine's Canva home page; the About
+// page's summary, bio, "The rest of me", education, experience and skills from her Canva About page.
+// PLACEHOLDER: the social profile URLs are still dummy text.
 
 export const tagline = 'Writer | Communications and Media Creative';
 
@@ -25,6 +23,10 @@ export const socials = [
   { label: 'Instagram', href: '#' },
   { label: 'LinkedIn', href: '#' },
 ];
+
+/** Her resume, a PDF in public/, and the name it saves under. The CG logo and Contact's button download it. */
+export const resumeHref = '/christine-guarda-resume.pdf';
+export const resumeFileName = 'Christine-Guarda-Resume.pdf';
 
 /** The front page's "A little about me". */
 export const aboutShort =

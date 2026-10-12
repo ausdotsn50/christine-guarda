@@ -12,7 +12,12 @@ const linkedinIcon = icon('logoLinkedin');
 
 export const siteName = 'Christine Guarda';
 
-export const dateline = 'UST–Legazpi · AB Communication · Class of 2027';
+/** The footer's legal line: the site and its work are Christine's. */
+export const legal = `© ${new Date().getFullYear()} Christine Guarda | All rights reserved.`;
+
+/** Who made the site, at the right of the legal line. */
+export const credit = { label: 'Website by', name: 'ausdotsn50', href: 'https://ausdotsn50-portfolio.vercel.app/' };
+
 
 export type Section = 'home' | 'about' | 'works' | 'contact';
 

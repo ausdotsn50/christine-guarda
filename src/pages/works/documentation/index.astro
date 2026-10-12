@@ -1,0 +1,33 @@
+---
+// The Documentations section front: the flag and sub-navigation (All, then the four headings of the Canva
+// Documentation page), then a band per heading previewing its photos (the first of each event, then the
+// seconds, up to four), each with "See all". Photos open in a Lightbox.
+import Base from '../../../layouts/Base.astro';
+import Band from '../../../components/site/Band.astro';
+import PlateShelf from '../../../components/site/PlateShelf.astro';
+import SectionFlag from '../../../components/site/SectionFlag.astro';
+import { documentationPages, documentationSections, workGroups } from '../../../data/categories';
+import { countLabel, documentationEvents, platesOf, type PlateItem } from '../../../lib/collections';
+
+const group = workGroups.documentation;
+const sections = await Promise.all(documentationSections.map(async (s) => {
+  const events = (await documentationEvents(s.slug)).map(platesOf);
+  const photos = events.flat();
+  // Round-robin over the events, so the preview shows as many of them as it can.
+  const preview: PlateItem[] = [];
+  for (let i = 0; preview.length < 4 && i < Math.max(0, ...events.map((e) => e.length)); i++) {
+    for (const e of events) if (e[i] && preview.length < 4) preview.push(e[i]);
+  }
+  const meta = [events.length > 1 && countLabel(events.length, 'event'), countLabel(photos.length, 'photo')].filter(Boolean).join(' - ');
+  return { ...s, preview, meta };
+}));
+---
+<Base title={group.title} description={group.dek}>
+  <SectionFlag group={group} pages={documentationPages} current={group.href} />
+
+  {sections.map((s) => (
+    <Band title={s.title} meta={s.meta} href={`/works/documentation/${s.slug}`}>
+      <PlateShelf plates={s.preview} kind="photo" />
+    </Band>
+  ))}
+</Base>

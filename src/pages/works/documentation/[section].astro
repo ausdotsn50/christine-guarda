@@ -1,0 +1,28 @@
+---
+// A Documentation heading: the section's flag with this heading current in its sub-navigation, then a band per
+// event (as on the Canva Documentation page) with all its photos, square and captioned, each opening in a
+// Lightbox that steps through the event.
+import Base from '../../../layouts/Base.astro';
+import Band from '../../../components/site/Band.astro';
+import PlateShelf from '../../../components/site/PlateShelf.astro';
+import SectionFlag from '../../../components/site/SectionFlag.astro';
+import { documentationPages, documentationSections, workGroups } from '../../../data/categories';
+import { countLabel, documentationEvents, platesOf } from '../../../lib/collections';
+
+export function getStaticPaths() {
+  return documentationSections.map((s) => ({ params: { section: s.slug }, props: { title: s.title } }));
+}
+
+const { section } = Astro.params;
+const { title } = Astro.props;
+const events = (await documentationEvents(section)).map((e) => ({ e, photos: platesOf(e) }));
+---
+<Base title={title} description={`Photographs from ${title}, by Christine Guarda.`}>
+  <SectionFlag group={workGroups.documentation} pages={documentationPages} current={`/works/documentation/${section}`} />
+
+  {events.map(({ e, photos }) => (
+    <Band title={e.data.title} meta={countLabel(photos.length, 'photo')} id={e.id}>
+      <PlateShelf plates={photos} kind="photo" />
+    </Band>
+  ))}
+</Base>

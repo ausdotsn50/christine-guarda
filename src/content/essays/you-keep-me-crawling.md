@@ -1,7 +1,7 @@
 ---
 title: "You Keep Me Crawling"
 group: short
-kicker: "Track 5 · AURORA"
+kicker: "Track 5 - AURORA"
 order: 5
 ---
 Forgive me, Father, for I have sinned. I cleaned the boots of the fallen. I sat with the exiled. I cared for the people you told me needed forgiveness and forgave them against your judgment.

@@ -17,22 +17,19 @@ export function categoryLabel(slug: CategorySlug): string {
   return categories.find((c) => c.slug === slug)!.label;
 }
 
-/** The three groups of the Works index, each a lettered section with its own front page; deks from the Canva Works page. */
+/** The three Works sections, each with its own front page; deks from the Canva Works page. */
 export const workGroups = {
   academic: {
-    letter: 'A',
     title: 'Academic & University Works',
     href: '/works/academic',
     dek: 'Writing, production, and design work from my BA Communication coursework and university involvements.',
   },
   personal: {
-    letter: 'B',
     title: 'Personal Works',
     href: '/works/personal',
     dek: 'Creative projects, personal experiments, and ideas developed beyond academic requirements.',
   },
   documentation: {
-    letter: 'C',
     title: 'Documentations',
     href: '/works/documentation',
     dek: 'Photographs, behind-the-scenes moments, and visual records of my projects and experiences.',
@@ -43,6 +40,21 @@ export const workGroups = {
 export const academicPages = [
   { label: 'All', href: '/works/academic' },
   ...categories.map((c) => ({ label: c.label, href: `/works/academic/${c.slug}` })),
+];
+
+/** The Documentation section's headings, in the Canva Documentation page's order: each a tab and page of its own,
+ *  holding its events (galleries with this `section`). */
+export const documentationSections = [
+  { slug: 'university-productions', title: 'University Productions' },
+  { slug: 'academic-related-productions', title: 'Academic-Related Productions' },
+  { slug: 'ust-legazpi-talastas', title: 'UST-Legazpi Talastas' },
+  { slug: 'philippine-student-quill-awards', title: 'Philippine Student Quill Awards' },
+] as const;
+
+/** The Documentation section's pages, in its sub-navigation's order: its front, then a page per heading. */
+export const documentationPages = [
+  { label: 'All', href: '/works/documentation' },
+  ...documentationSections.map((s) => ({ label: s.title, href: `/works/documentation/${s.slug}` })),
 ];
 
 /** The Essays page's groups, in order (headings from the essay list Christine gave). */

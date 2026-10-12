@@ -24,7 +24,7 @@ interface Props {
 
 const { essay, level = 3, prev, next, position, total = 1 } = Astro.props;
 const { title, group, kicker, year, context } = essay.data;
-const label = [kicker ?? essayGroups.find((g) => g.key === group)?.kicker, year].filter(Boolean).join(' · ');
+const label = [kicker ?? essayGroups.find((g) => g.key === group)?.kicker, year].filter(Boolean).join(' - ');
 const credits: BylineItem[] = [{ label: 'By', value: 'Christine Guarda' }];
 if (year) credits.push({ label: 'Year', value: String(year) });
 if (context) credits.push({ label: 'Written for', value: context });

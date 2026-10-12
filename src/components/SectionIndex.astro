@@ -1,0 +1,28 @@
+---
+import type { IndexGroup } from './types';
+
+interface Props {
+  groups: IndexGroup[];
+  /** Default "In this issue". */
+  title?: string;
+  label?: string;
+  class?: string;
+}
+
+const { groups = [], title, label, class: className } = Astro.props;
+---
+<nav class:list={['cg-index', className]} aria-label={label || 'More works'}>
+  <p class="cg-index-title">{title || 'In this issue'}</p>
+  <div class="cg-index-cols">
+    {groups.map((g) => (
+      <div class="cg-index-group">
+        <p class="cg-kicker">{g.label}</p>
+        <ul>
+          {(g.items || []).map((it) => (
+            <li><a href={it.href || '#'} class={it.current ? 'is-current' : undefined} aria-current={it.current ? 'page' : undefined}>{it.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</nav>

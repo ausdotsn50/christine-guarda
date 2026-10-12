@@ -1,0 +1,24 @@
+---
+// Return (bottom left) and Next (bottom right) through the Works pages, in Works index order.
+import ArrowLink from '../ArrowLink.astro';
+import { workGroups } from '../../data/categories';
+import { readingOrder } from '../../lib/collections';
+
+interface Props {
+  /** The href of the current page in the reading order. */
+  current: string;
+}
+
+const order = readingOrder();
+const i = order.findIndex((p) => p.href === Astro.props.current);
+const back = i > 0 ? order[i - 1] : { label: workGroups.academic.title, href: workGroups.academic.href };
+const next = i >= 0 && i < order.length - 1 ? order[i + 1] : undefined;
+---
+<nav class="return-next" aria-label="Works pages">
+  <ArrowLink direction="back" stacked href={back.href}>Return<span class="cg-sr">{`: ${back.label}`}</span></ArrowLink>
+  {next && <ArrowLink stacked href={next.href}>Next<span class="cg-sr">{`: ${next.label}`}</span></ArrowLink>}
+</nav>
+
+<style>
+  .return-next { display: flex; flex: 1; justify-content: space-between; gap: var(--space-8); }
+</style>

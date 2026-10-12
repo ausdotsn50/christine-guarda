@@ -25,7 +25,7 @@ const works = await getWorks();
 const skillGroups = skills.map((s) => ({
   ...s,
   related: s.related.map((slug) => ({
-    href: `/works/${slug}`,
+    href: `/works/academic/${slug}`,
     label: categoryLabel(slug),
     count: countLabel(works.filter((w) => w.data.category === slug).length, 'work'),
   })),

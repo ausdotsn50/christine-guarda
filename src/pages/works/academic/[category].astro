@@ -1,0 +1,32 @@
+---
+// An Academic category: the section's flag with this category current in its sub-navigation, then a WorkEntry per
+// work in order. (The SectionIndex and Return / Next are off for now; both components are kept to add back.)
+import Base from '../../../layouts/Base.astro';
+import SectionFlag from '../../../components/site/SectionFlag.astro';
+import WorkEntry from '../../../components/site/WorkEntry.astro';
+import { academicPages, categories, workGroups, type CategorySlug } from '../../../data/categories';
+import { getWorks } from '../../../lib/collections';
+
+export function getStaticPaths() {
+  return categories.map((c) => ({ params: { category: c.slug }, props: { label: c.label } }));
+}
+
+const category = Astro.params.category as CategorySlug;
+const { label } = Astro.props;
+const href = `/works/academic/${category}`;
+const works = await getWorks(category);
+---
+<Base title={label} description={`${label}: works by Christine Guarda.`}>
+  <SectionFlag group={workGroups.academic} pages={academicPages} current={href} />
+
+  <div class="entries">
+    {works.map((w) => <WorkEntry work={w} />)}
+    {works.length === 0 && <p class="empty">Works coming soon.</p>}
+  </div>
+
+</Base>
+
+<style>
+  .entries { display: flex; flex-direction: column; gap: var(--space-12); }
+  .empty { margin: 0; padding: var(--space-6); border: var(--stroke-hair) dashed var(--rule); font-family: var(--font-text); font-style: italic; text-align: center; }
+</style>
