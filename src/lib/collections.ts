@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { categories, categoryLabel, type CategorySlug } from '../data/categories';
+import { categories, categoryLabel, documentationSections, type CategorySlug } from '../data/categories';
 import type { IndexGroup } from '../components/types';
 
 export type Work = CollectionEntry<'works'>;
@@ -57,10 +57,9 @@ export const essayPreviewId = (essay: Essay) => `essay-${essay.id}`;
 
 export const workHref = (w: Work) => `/works/academic/${w.data.category}#${w.id}`;
 
-/** The Documentation section's pages, in its sub-navigation's order: its front, then an event page each. */
-export async function documentationPages(): Promise<{ label: string; href: string }[]> {
-  const events = await getGalleries('documentation');
-  return [{ label: 'All', href: '/works/documentation' }, ...events.map((e) => ({ label: e.data.title, href: `/works/documentation/${e.id}` }))];
+/** A Documentation heading's events, in order. */
+export async function documentationEvents(section: string): Promise<Gallery[]> {
+  return (await getGalleries('documentation')).filter((e) => e.data.section === section);
 }
 
 /** The pages of the Works section in Works index order, for Return / Next. */
@@ -75,12 +74,11 @@ export function readingOrder(): { label: string; href: string }[] {
 
 /** The SectionIndex groups, with the item at `currentHref` marked current. */
 export async function sectionIndexGroups(currentHref?: string): Promise<IndexGroup[]> {
-  const docs = await getGalleries('documentation');
   const item = (label: string, href: string) => ({ label, href, current: href === currentHref });
   return [
     { label: 'Academic & University', items: categories.map((c) => item(c.label, `/works/academic/${c.slug}`)) },
     { label: 'Personal', items: [item('Digital Art', '/works/personal/digital-art'), item('Essays', '/works/personal/essays')] },
-    { label: 'Documentation', items: docs.map((d) => item(d.data.title, `/works/documentation/${d.id}`)) },
+    { label: 'Documentation', items: documentationSections.map((s) => item(s.title, `/works/documentation/${s.slug}`)) },
   ];
 }
 

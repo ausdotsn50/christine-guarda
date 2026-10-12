@@ -1,7 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { categorySlugs } from './data/categories';
+import { categorySlugs, documentationSections } from './data/categories';
 
 // One Markdown file per project; the body is the description.
 const works = defineCollection({
@@ -63,6 +63,8 @@ const galleries = defineCollection({
     z.object({
       title: z.string(),
       group: z.enum(['digital-art', 'documentation']),
+      /** A Documentation event's heading (its tab and page). */
+      section: z.enum(documentationSections.map((s) => s.slug) as [string, ...string[]]).optional(),
       /** Left out when unknown; it then drops from the captions and counts. */
       year: z.number().int().optional(),
       order: z.number().default(0),
