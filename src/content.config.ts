@@ -44,7 +44,7 @@ const essays = defineCollection({
     title: z.string(),
     /** The Essays page's two groups: longer essays and short ones. */
     group: z.enum(['long', 'short']),
-    /** The line above the title, e.g. "Track 1 · AURORA"; the group's name stands in without one. */
+    /** The line above the title, e.g. "Track 1 - AURORA"; the group's name stands in without one. */
     kicker: z.string().optional(),
     year: z.number().int().optional(),
     /** "Written for" in the Byline, for an essay written for a class. */

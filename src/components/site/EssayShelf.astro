@@ -1,0 +1,16 @@
+---
+// A shelf of essay clippings, laid out by the Band it sits in (one card across on phones), each opening in a
+// Lightbox that steps through this shelf only. Empty, it says the essays are on their way.
+import EssayClip from './EssayClip.astro';
+import { essayPreviewId, inSequence, type Essay } from '../../lib/collections';
+
+interface Props {
+  essays: Essay[];
+}
+
+const { essays } = Astro.props;
+const clips = inSequence(essays.map((essay) => ({ essay, id: essayPreviewId(essay) })));
+---
+{clips.length > 0
+  ? <div class="shelf is-text">{clips.map((c) => <EssayClip {...c} />)}</div>
+  : <p class="band-empty">Essays coming soon.</p>}

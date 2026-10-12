@@ -1,7 +1,7 @@
 ---
 title: "Exist for Love"
 group: short
-kicker: "Track 6 · AURORA"
+kicker: "Track 6 - AURORA"
 order: 6
 ---
 Can love exist in the middle of a catastrophe? I often ask myself, uncertain whether love can truly persist if the end of the world were to come. I found the answer as I looked at my sister’s sleeping face while scrolling on my laptop and seeing the world in havoc.

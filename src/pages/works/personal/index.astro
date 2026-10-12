@@ -4,11 +4,11 @@
 // open in a Lightbox.
 import Base from '../../../layouts/Base.astro';
 import Band from '../../../components/site/Band.astro';
-import EssayClip from '../../../components/site/EssayClip.astro';
-import Plate from '../../../components/site/Plate.astro';
+import EssayShelf from '../../../components/site/EssayShelf.astro';
+import PlateShelf from '../../../components/site/PlateShelf.astro';
 import SectionFlag from '../../../components/site/SectionFlag.astro';
 import { personalPages, workGroups } from '../../../data/categories';
-import { countLabel, essayPreviewId, getEssays, getGalleries, inSequence, platesOf } from '../../../lib/collections';
+import { countLabel, getEssays, getGalleries, platesOf } from '../../../lib/collections';
 
 const group = workGroups.personal;
 const series = await getGalleries('digital-art');
@@ -19,15 +19,11 @@ const essays = await getEssays();
 <Base title={group.title} description={group.dek}>
   <SectionFlag group={group} pages={personalPages} current="/works/personal" />
 
-  <Band title="Digital Art" meta={`${countLabel(series.length, 'series', 'series')} · ${countLabel(plates.length, 'piece')}`} href="/works/personal/digital-art">
-    {plates.length > 0
-      ? <div class="shelf">{inSequence(preview).map((p) => <Plate {...p} showSeries />)}</div>
-      : <p class="band-empty">Pieces coming soon.</p>}
+  <Band title="Digital Art" meta={`${countLabel(series.length, 'series', 'series')} - ${countLabel(plates.length, 'piece')}`} href="/works/personal/digital-art">
+    <PlateShelf plates={preview} showSeries />
   </Band>
 
   <Band title="Essays" meta={countLabel(essays.length, 'essay')} href="/works/personal/essays">
-    {essays.length > 0
-      ? <div class="shelf is-text">{inSequence(essays.slice(0, 4).map((e) => ({ essay: e, id: essayPreviewId(e) }))).map((x) => <EssayClip {...x} />)}</div>
-      : <p class="band-empty">Essays coming soon.</p>}
+    <EssayShelf essays={essays.slice(0, 4)} />
   </Band>
 </Base>

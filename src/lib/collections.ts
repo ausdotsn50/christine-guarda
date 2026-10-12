@@ -42,6 +42,10 @@ export function platesOf(series: Gallery) {
   return images.map((img, i) => ({ ...img, id: `plate-${series.id}-${i + 1}`, number: i + 1, series: title, year }));
 }
 
+/** One gallery piece as a plate (see platesOf), and its kind: a Digital Art piece or a Documentation photo. */
+export type PlateItem = ReturnType<typeof platesOf>[number];
+export type PlateKind = 'art' | 'photo';
+
 /** Plates in the order they sit on a shelf, each with its neighbours and place, for the preview's previous /
  *  next and its "3 of 7". */
 export function inSequence<T extends { id: string }>(items: T[]) {

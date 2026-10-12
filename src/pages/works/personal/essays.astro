@@ -3,10 +3,10 @@
 // each essay a clipping that opens in a Lightbox on a sheet, stepping through its group.
 import Base from '../../../layouts/Base.astro';
 import Band from '../../../components/site/Band.astro';
-import EssayClip from '../../../components/site/EssayClip.astro';
+import EssayShelf from '../../../components/site/EssayShelf.astro';
 import SectionFlag from '../../../components/site/SectionFlag.astro';
 import { essayGroups, personalPages, workGroups } from '../../../data/categories';
-import { countLabel, essayPreviewId, getEssays, inSequence } from '../../../lib/collections';
+import { countLabel, getEssays } from '../../../lib/collections';
 
 const essays = await getEssays();
 const groups = essayGroups.map((g) => ({ ...g, essays: essays.filter((e) => e.data.group === g.key) })).filter((g) => g.essays.length > 0);
@@ -17,7 +17,7 @@ const groups = essayGroups.map((g) => ({ ...g, essays: essays.filter((e) => e.da
   {groups.map((g) => (
     <Band title={g.title} meta={countLabel(g.essays.length, 'essay')} id={g.key}>
       {'dek' in g && <p class="band-dek">{g.dek}</p>}
-      <div class="shelf is-text">{inSequence(g.essays.map((e) => ({ essay: e, id: essayPreviewId(e) }))).map((x) => <EssayClip {...x} />)}</div>
+      <EssayShelf essays={g.essays} />
     </Band>
   ))}
   {groups.length === 0 && <p class="empty">Essays coming soon.</p>}

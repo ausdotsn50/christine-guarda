@@ -1,0 +1,19 @@
+---
+// A shelf of gallery plates, laid out by the Band it sits in (4 across on desktop, 3 on tablets, 2 on phones):
+// Digital Art pieces or Documentation photos, each opening in a Lightbox that steps through this shelf only.
+// Empty, it says the pieces are on their way.
+import Plate from './Plate.astro';
+import { inSequence, type PlateItem, type PlateKind } from '../../lib/collections';
+
+interface Props {
+  plates: PlateItem[];
+  kind?: PlateKind;
+  /** Add each piece's series to its caption, where several series share the shelf. */
+  showSeries?: boolean;
+}
+
+const { plates, kind = 'art', showSeries = false } = Astro.props;
+---
+{plates.length > 0
+  ? <div class="shelf">{inSequence(plates).map((p) => <Plate {...p} kind={kind} showSeries={showSeries} />)}</div>
+  : <p class="band-empty">{kind === 'photo' ? 'Photos' : 'Pieces'} coming soon.</p>}
