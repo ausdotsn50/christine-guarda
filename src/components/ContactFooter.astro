@@ -14,6 +14,9 @@ interface Props {
 const { title, contacts = [], social = [], nav = [], legal, class: className } = Astro.props;
 // Optional glyphs (FooterItem.icon). Without them the markup is exactly bundle.js's.
 const contactIcons = contacts.some((c) => c.icon);
+// Site addition: a "credit" slot sits at the right of the legal line (both in .cg-foot-bottom); without it the markup
+// is bundle.js's.
+const hasCredit = Astro.slots.has('credit');
 ---
 <footer class:list={['cg-foot', className]}>
   <div class="cg-foot-grid">
@@ -53,5 +56,7 @@ const contactIcons = contacts.some((c) => c.icon);
       </ul>
     </div>
   </div>
-  <p class="cg-foot-legal">{legal || '© ausdotsn50 | All rights reserved.'}</p>
+  {hasCredit
+    ? <div class="cg-foot-bottom"><p class="cg-foot-legal">{legal || '© ausdotsn50 | All rights reserved.'}</p><slot name="credit" /></div>
+    : <p class="cg-foot-legal">{legal || '© ausdotsn50 | All rights reserved.'}</p>}
 </footer>

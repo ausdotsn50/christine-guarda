@@ -72,3 +72,10 @@ img, video { max-width: 100%; height: auto; }
 .photo-wash:is(:hover, :focus-visible)::after { opacity: 0; }
 .photo-wash:is(:hover, :focus-visible) img { filter: none; }
 @media (prefers-reduced-motion: reduce) { .photo-wash img, .photo-wash::after { transition: none; } }
+
+/* The footer's bottom row: the legal line at the left, the site's credit at the right (stacked on narrow screens). */
+.cg-foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--space-1) var(--space-6); margin-top: var(--space-3); }
+.cg-foot-bottom .cg-foot-legal { margin: 0; }
+.cg-foot-credit { margin: 0; font-family: var(--font-text); font-size: 13px; line-height: 18px; color: var(--oxblood); }
+.cg-foot-credit a { font-weight: 700; color: var(--press-blue-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.cg-foot-credit a:hover { text-decoration-thickness: var(--stroke); }

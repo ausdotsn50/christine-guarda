@@ -11,7 +11,7 @@ import defaultShareImage from '../assets/christine/og.jpg';
 import Masthead from '../components/Masthead.astro';
 import ContactFooter from '../components/ContactFooter.astro';
 import SiteMenu from '../components/site/SiteMenu.astro';
-import { siteName, nav, navSection, contacts, social, footerNav, menuLinks, worksSections } from '../data/site';
+import { siteName, nav, navSection, contacts, social, footerNav, menuLinks, worksSections, legal, credit } from '../data/site';
 
 interface Props {
   /** The page's own name; the document title becomes "{title} | Christine Guarda" (the name on every page, for search). */
@@ -83,7 +83,9 @@ const ogImage = site ? new URL(share.src, site).href : undefined;
         <slot />
       </main>
       {Astro.slots.has('next') && <div class="site-next"><slot name="next" /></div>}
-      {!bare && <ContactFooter contacts={contacts} social={social} nav={footerNav} />}
+      {!bare && <ContactFooter contacts={contacts} social={social} nav={footerNav} legal={legal}>
+          <p slot="credit" class="cg-foot-credit">{credit.label} <a href={credit.href} target="_blank" rel="noopener">{credit.name}<span class="cg-sr"> (opens in a new tab)</span></a></p>
+        </ContactFooter>}
     </div>
   </body>
 </html>
