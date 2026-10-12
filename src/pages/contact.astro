@@ -1,0 +1,56 @@
+---
+// Contact: one headline, one line and the two things to do next (her resume, her works); the footer below carries the
+// emails, phone and social links, so the page doesn't repeat them.
+// The headline is a sticker laid over the cutout portrait: "Let's" in the Rochester script, tilted, over a huge italic
+// "CONNECT!", both whole and in front of her (the two share one grid cell, the title on top). Each is edged in paper so
+// it reads where it crosses her: "Let's" thickly, like a cut-out, and the capitals in a thin line that scales with
+// them (4px on desktop, 2px on phones), which only shows over the photo (paper on paper is invisible).
+import '@fontsource/rochester/latin-400.css';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import { resumeHref } from '../data/profile';
+import portrait from '../assets/christine/contact.png';
+---
+<Base title="Contact" description="Get in touch with Christine Guarda: download her resume or look through her works.">
+  <section class="contact">
+    <div class="contact-stage">
+      <div class="contact-portrait">
+        <Image src={portrait} alt="Christine Guarda, smiling, writing on a tablet with a stylus" widths={[320, 480, 720]} sizes="(max-width: 640px) 260px, 380px" loading="eager" fetchpriority="high" />
+      </div>
+      <h1 class="contact-title"><span class="contact-lets">Let’s</span> <span class="contact-word">connect!</span></h1>
+    </div>
+    <p class="contact-dek">I value opportunities to contribute, learn, and bring ideas to life.</p>
+    <div class="contact-actions">
+      <Button href={resumeHref} download="Christine-Guarda-Resume.pdf">Download resume<span class="cg-sr"> (PDF)</span></Button>
+      <Button variant="outline" href="/works/academic">View my works</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact { display: flex; flex-direction: column; align-items: center; gap: var(--space-6); text-align: center; }
+
+  /* The stage: the portrait and, over it, the title, in one cell; the title across her lower half. */
+  .contact-stage { display: grid; justify-items: center; align-items: center; width: 100%; container-type: inline-size; }
+  .contact-stage > * { grid-area: 1 / 1; }
+  .contact-portrait { width: min(100%, 380px); }
+  .contact-portrait :global(img) { display: block; width: 100%; height: auto; }
+
+  .contact-title { align-self: end; display: flex; flex-direction: column; align-items: center; margin: 0; padding-bottom: var(--space-16); pointer-events: none; }
+  /* "Let's": the script, tilted, tucked over the capitals' top-left. */
+  .contact-lets { align-self: flex-start; margin: 0 0 -0.32em 8%; font-family: 'Rochester', var(--font-display); font-weight: 400; font-size: clamp(56px, 10cqi, 128px); line-height: 1; color: var(--oxblood); transform: rotate(-8deg); transform-origin: left bottom; }
+  .contact-lets, .contact-word { paint-order: stroke fill; }
+  .contact-lets { -webkit-text-stroke: .12em var(--paper); }
+  /* "CONNECT!": the capitals, as wide as the stage allows. */
+  .contact-word { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: clamp(44px, 15.5cqi, 184px); line-height: .9; letter-spacing: -.01em; text-transform: uppercase; color: var(--press-blue); -webkit-text-stroke: max(var(--stroke), .022em) var(--paper); }
+
+  .contact-dek { margin: 0; max-width: var(--measure); font-family: var(--font-text); font-style: italic; font-size: 20px; line-height: 30px; color: var(--oxblood); }
+  .contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4); }
+
+  @media (max-width: 640px) {
+    .contact-portrait { width: min(100%, 260px); }
+    .contact-title { padding-bottom: var(--space-12); }
+    .contact-dek { font-size: 18px; line-height: 28px; }
+  }
+</style>
