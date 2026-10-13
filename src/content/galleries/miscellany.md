@@ -13,12 +13,18 @@ images:
   - src: ../../assets/works/personal/digital-art/miscellany/electron-relapse.jpg
     title: "Electron Relapse"
     alt: "A sunlit classroom corner: a skeleton model in an open cabinet beside a green chalkboard covered in notes."
+  - src: ../../assets/works/personal/digital-art/miscellany/enrollment-day.jpg
+    title: "Enrollment Day"
+    alt: "Four sketches of a student in glasses with a yellow lanyard and a crossbody bag: leaning on a counter with her phone, beside a “Cut Off” sign, hand on hip, and reading her phone."
   - src: ../../assets/works/personal/digital-art/miscellany/family-picture.jpg
     title: "Family Picture (Realism Attempt)"
     alt: "A realistic painting of four women posing together on a couch, one making a peace sign."
   - src: ../../assets/works/personal/digital-art/miscellany/kitchen-day.jpg
     title: "Kitchen Day"
     alt: "A table set with plates of rice and fried chicken, glasses of iced tea and a bottle of Coca-Cola, under the words “wise men says only fools rush in…”."
+  - src: ../../assets/works/personal/digital-art/miscellany/school-day.jpg
+    title: "School Day (?)"
+    alt: "A sketch of a student asleep on a library desk beside her phone, a message reading “No classes today”, labelled “@Library” with the note “Pumasok ng early para magbayad ng tuition”."
   - src: ../../assets/works/personal/digital-art/miscellany/the-ridleys-dagos-2026.jpg
     title: "The Ridleys, Dagos 2026"
     alt: "The band The Ridleys playing on a lit concert stage at night, their name on the screen behind them and the crowd in silhouette."

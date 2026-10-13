@@ -2,10 +2,11 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ArchFrame from '../components/ArchFrame.astro';
+import ArrowLink from '../components/ArrowLink.astro';
 import Button from '../components/Button.astro';
 import SectionHead from '../components/SectionHead.astro';
 import WorkCard from '../components/WorkCard.astro';
-import { cardImage, getWorks, workHref } from '../lib/collections';
+import { getWorks, illustration, workHref } from '../lib/collections';
 import { aboutShort, tagline } from '../data/profile';
 import portrait from '../assets/christine/home.png';
 
@@ -30,7 +31,8 @@ if (featured.length > 3) {
     <div class="intro-head"><h2 class="intro-title">A little about me</h2></div>
     <div class="intro-body">
       <p>{aboutShort}</p>
-      <Button href="/about">Read more</Button>
+      <Button href="/about" class="intro-more">Read more</Button>
+      <ArrowLink href="/about" class="intro-link">Read more</ArrowLink>
     </div>
   </section>
 
@@ -38,8 +40,8 @@ if (featured.length > 3) {
     <SectionHead variant="split" dek="Stories, publications, and productions that shaped my work in communication.">Featured works</SectionHead>
     <div class="cg-work-grid featured-grid">
       {featured.map((w) => (
-        <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} href={workHref(w)} mediaLink photo={cardImage(w)?.photo}>
-          {cardImage(w) && <Fragment slot="image"><Image src={cardImage(w)!.src} alt={cardImage(w)!.alt} widths={[400, 800]} sizes="(max-width: 720px) 100vw, 360px" /></Fragment>}
+        <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} href={workHref(w)} mediaLink>
+          <Fragment slot="image"><Image src={illustration(w).src} alt="" widths={[400, 800]} sizes="(max-width: 720px) 100vw, 360px" /></Fragment>
         </WorkCard>
       ))}
     </div>
@@ -70,7 +72,10 @@ if (featured.length > 3) {
   @media (max-width: 640px) {
     .intro-body p { text-align: left; }
   }
-  .intro-body > :global(.cg-btn) { margin-right: var(--space-12); }
+  /* "Read more": a pill as wide as the text; where the section stacks (below), an underlined arrow link on its own
+     line under the text instead, at the right. */
+  .intro-body > :global(.intro-link) { display: none; align-self: flex-end; }
+  .intro-body > :global(.intro-link span) { text-decoration: underline; text-decoration-thickness: var(--stroke); text-underline-offset: 6px; }
 
   /* Featured works: the dek reads left to right beside the head; wider gaps between the cards. */
   .featured { display: flex; flex-direction: column; gap: var(--space-8); }
@@ -94,7 +99,8 @@ if (featured.length > 3) {
   @media (max-width: 800px) {
     .intro { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-6); }
     .intro-head { padding: var(--space-6) 0 var(--space-6) var(--space-6); }
-    .intro-body > :global(.cg-btn) { align-self: flex-start; margin-right: 0; }
+    .intro-body > :global(.intro-link) { display: inline-flex; }
+    .intro-body > :global(.intro-more) { display: none; }
   }
   @media (max-width: 720px) {
     .featured > :global(.cg-sh-split .cg-sh-title) { font-size: 34px; line-height: 38px; }

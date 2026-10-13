@@ -7,6 +7,9 @@ images:
   - src: ../../assets/works/personal/digital-art/fan-art/human-apple-jack.jpg
     title: "Human Apple Jack"
     alt: "Applejack from My Little Pony drawn as a woman in a cowboy hat, brown crop top and flared jeans, with her name lettered beside her."
+  - src: ../../assets/works/personal/digital-art/fan-art/human-rainbow-dash.jpg
+    title: "Human Rainbow Dash"
+    alt: "Rainbow Dash from My Little Pony drawn as a young woman with rainbow hair, a white crop top, an oversized blue jacket, patched wide-leg jeans and red sneakers, with her name lettered beside her."
   - src: ../../assets/works/personal/digital-art/fan-art/human-twilight-sparkle.jpg
     title: "Human Twilight Sparkle"
     alt: "Twilight Sparkle from My Little Pony drawn as a girl in a purple school uniform and leg warmers, carrying a book, with her name lettered beside her."

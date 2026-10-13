@@ -70,14 +70,20 @@ const categoryArt: Record<CategorySlug, ImageMetadata> = {
   'visual-brand-design': cameraArt, // the visual one
 };
 
+/** A work's category drawing as its card image (decorative: the card's link is named by the title). The front page's
+ *  Featured works always show theirs, so the three cards keep their drawings together, as on Canva. */
+export function illustration(w: Work): { src: ImageMetadata; alt: string; photo: boolean } {
+  return { src: categoryArt[w.data.category], alt: '', photo: false };
+}
+
 /** A work's card image: its video's still (a photo, for the photo wash), else its own image or the first of its
- *  pictures, else its category's generic art (decorative: the card's link is named by the title). */
+ *  pictures, else its category's drawing. */
 export function cardImage(w: Work): { src: ImageMetadata; alt: string; photo: boolean } {
   if (w.data.video) return { src: w.data.video.still, alt: w.data.video.alt, photo: true };
   if (w.data.image) return { ...w.data.image, photo: false };
   const first = w.data.gallery[0];
   if (first) return { src: first.src, alt: first.alt, photo: false };
-  return { src: categoryArt[w.data.category], alt: '', photo: false };
+  return illustration(w);
 }
 
 export const workHref = (w: Work) => `/works/academic/${w.data.category}#${w.id}`;

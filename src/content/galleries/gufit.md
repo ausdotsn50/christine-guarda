@@ -1,6 +1,6 @@
 ---
 # Titles from the file names; the alt text describes each piece. Add the year where you know it.
-title: "GuFit"
+title: "GUFIT (Gulay as Fits)"
 group: digital-art
 order: 1
 images:
