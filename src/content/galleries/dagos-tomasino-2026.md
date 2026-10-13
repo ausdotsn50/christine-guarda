@@ -19,4 +19,6 @@ images:
     alt: "The Dagos Tomasino stage on the field, the audience in front of it."
   - src: ../../assets/works/documentation/university-productions/dagos-tomasino-2026/07.jpg
     alt: "Crew members at the production tables under the tent."
+  - src: ../../assets/works/documentation/university-productions/dagos-tomasino-2026/08.jpg
+    alt: "A crew member at the laptops and monitors under the production tent at night."
 ---

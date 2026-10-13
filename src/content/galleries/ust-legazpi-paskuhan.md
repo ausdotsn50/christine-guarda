@@ -6,7 +6,8 @@ section: university-productions
 order: 4
 images:
   - src: ../../assets/works/documentation/university-productions/ust-legazpi-paskuhan/01.jpg
-    alt: "A crew member at the laptops and monitors in the production booth."
-  - src: ../../assets/works/documentation/university-productions/ust-legazpi-paskuhan/02.jpg
     alt: "The Paskuhan crew posing on the stage under blue lights."
+  - src: ../../assets/works/documentation/university-productions/ust-legazpi-paskuhan/video.jpg
+    video: ../../assets/works/documentation/university-productions/ust-legazpi-paskuhan/video.mp4
+    alt: "A short video of the crew at their laptops around a long table, one of them smiling at the camera."
 ---

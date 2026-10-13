@@ -90,8 +90,12 @@ const galleries = defineCollection({
       year: z.number().int().optional(),
       order: z.number().default(0),
       /** Empty until the photos are added; the gallery then shows its head and caption only. */
-      /** `title` names a piece ("Asparagus"); `caption` adds a line about it, shown in the preview. */
-      images: z.array(z.object({ src: image(), alt: z.string(), title: z.string().optional(), caption: z.string().optional() })).default([]),
+      /** `title` names a piece ("Asparagus"); `caption` adds a line about it, shown in the preview. `video` makes the
+       *  item a short clip (a muted MP4 beside the photos, path relative to this file, like `src`), with `src` as its
+       *  poster frame and `alt` describing the clip. */
+      images: z
+        .array(z.object({ src: image(), alt: z.string(), title: z.string().optional(), caption: z.string().optional(), video: z.string().optional() }))
+        .default([]),
     }),
 });
 

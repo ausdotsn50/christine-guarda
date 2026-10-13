@@ -5,7 +5,11 @@
 // corner. Given its neighbours in a group (see inSequence), it also steps to the previous / next preview: buttons
 // either side of the content on wider screens and in a bar under it on phones, plus the arrow keys and a sideways
 // swipe. The content shows its place ("3 of 7") with the class "lightbox-count", in a second element after the
-// piece (a Plate's caption, an essay's count line), so the steps centre on the piece itself.
+// piece (a Plate's caption, an essay's count line), so the steps centre on the piece itself. `subtle` draws the steps
+// as bare chevrons (for a strip's zoomed picture, whose strip has boxed chevrons of its own).
+// A picture marked data-fit takes --room-h as its max-height: the screen's height less the × row and its caption
+// (the script measures what the content holds besides the picture and sets it as --lightbox-rest), so a long
+// caption still fits on screen. On a very short screen the picture keeps 40% of the height and the preview scrolls.
 import { icon } from '../../lib/icons';
 
 interface Props {
@@ -19,16 +23,18 @@ interface Props {
   total?: number;
   /** What one preview is, for the steps' labels: "piece", "photo", "essay". */
   thing?: string;
+  /** Bare chevrons for the steps, dimmed until hovered. */
+  subtle?: boolean;
   class?: string;
 }
 
-const { id, label, prev, next, total = 1, thing = 'item', class: className } = Astro.props;
+const { id, label, prev, next, total = 1, thing = 'item', subtle = false, class: className } = Astro.props;
 const close = icon('closeOutline', { size: 28 });
 const back = icon('chevronBackOutline', { size: 28 });
 const forward = icon('chevronForwardOutline', { size: 28 });
 const hasSteps = total > 1;
 ---
-<div id={id} class:list={['lightbox', hasSteps && 'has-steps', className]} popover role="dialog" aria-label={label}>
+<div id={id} class:list={['lightbox', hasSteps && 'has-steps', subtle && 'is-subtle', className]} popover role="dialog" aria-label={label}>
   <div class="lightbox-bar">
     <button class="lightbox-close" type="button" popovertarget={id} popovertargetaction="hide" aria-label="Close" autofocus set:html={close} />
   </div>
@@ -79,10 +85,11 @@ const hasSteps = total > 1;
   });
 
   // Swipes are touch (or pen) only, so a mouse can still select an essay's text, and only clearly sideways ones,
-  // so scrolling an essay never steps.
+  // so scrolling an essay never steps. Not on a video, whose controls take sideways drags.
   let start: { x: number; y: number } | null = null;
   document.addEventListener('pointerdown', (e) => {
-    start = e.pointerType !== 'mouse' && openBox()?.contains(e.target as Node) ? { x: e.clientX, y: e.clientY } : null;
+    const on = e.target as Element;
+    start = e.pointerType !== 'mouse' && openBox()?.contains(on) && !on.closest('video') ? { x: e.clientX, y: e.clientY } : null;
   });
   document.addEventListener('pointercancel', () => { start = null; });
   document.addEventListener('pointerup', (e) => {
@@ -95,11 +102,33 @@ const hasSteps = total > 1;
     if (Math.abs(dx) > 50 && Math.abs(dx) > 2 * Math.abs(dy)) setTimeout(() => step(from, dx > 0 ? 'prev' : 'next'));
   });
 
+  // The caption's room: its height depends on the picture's width (it wraps to it), which depends on the room left,
+  // so measure again until it settles (a round or two).
+  function fit(box: HTMLElement) {
+    const media = box.querySelector<HTMLElement>('[data-fit]');
+    const main = box.querySelector<HTMLElement>('.lightbox-main');
+    if (!media || !main) return;
+    let rest = -1;
+    for (let i = 0; i < 4; i++) {
+      const now = Math.ceil(main.getBoundingClientRect().height - media.getBoundingClientRect().height);
+      if (now === rest) break;
+      rest = now;
+      box.style.setProperty('--lightbox-rest', `${rest}px`);
+    }
+  }
+  // Again once the picture loads (it sizes the caption's width) and when the window changes size.
+  document.addEventListener('load', (e) => {
+    const box = (e.target as Element).closest?.<HTMLElement>('.lightbox:popover-open');
+    if (box) fit(box);
+  }, true);
+  addEventListener('resize', () => document.querySelectorAll<HTMLElement>('.lightbox:popover-open').forEach(fit));
+
   document.addEventListener('toggle', (e) => {
     const box = e.target as HTMLElement;
     if (!box.matches?.('.lightbox')) return;
     if ((e as ToggleEvent).newState === 'open') {
       box.querySelectorAll<HTMLElement>('.lightbox-main *').forEach((el) => { if (el.scrollTop) el.scrollTop = 0; });
+      fit(box);
       return;
     }
     requestAnimationFrame(() => {
@@ -111,7 +140,10 @@ const hasSteps = total > 1;
 </script>
 
 <style>
-  .lightbox { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-8)); margin: auto; padding: 0; border: 0; background: transparent; color: var(--oxblood); overflow: visible; }
+  .lightbox { --room-h: max(40dvh, calc(100dvh - 2 * var(--space-8) - (48px + var(--space-3)) - var(--lightbox-rest, var(--space-16)))); max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-8)); margin: auto; padding: 0; border: 0; background: transparent; color: var(--oxblood); overflow: visible; }
+  /* A screen too short for a picture and a long caption: the preview scrolls. (Only there: scrolling clips the
+     ×'s focus ring at the preview's edge.) */
+  @media (max-height: 560px) { .lightbox:has([data-fit]) { overflow-y: auto; } }
   .lightbox::backdrop { background: color-mix(in srgb, color-mix(in srgb, var(--oxblood), black 45%) 88%, transparent); }
   /* The content's column, the × in a row above it at its right edge. */
   .lightbox:popover-open { display: grid; grid-template-columns: auto; grid-template-areas: 'bar' 'main'; row-gap: var(--space-3); }
@@ -120,6 +152,9 @@ const hasSteps = total > 1;
   /* Solid square buttons, so they show over the dimmed page and over a sheet alike. */
   .lightbox-close, .step { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: var(--stroke) solid var(--on-oxblood); border-radius: var(--radius-none); background: var(--oxblood); color: var(--on-oxblood); cursor: pointer; }
   .lightbox-close:hover, .step:hover { background: color-mix(in srgb, var(--oxblood), black 25%); }
+  /* Subtle steps: the chevron alone, in cream, dimmed until hovered or focused. */
+  .lightbox.is-subtle .step { border-color: transparent; background: transparent; color: color-mix(in srgb, var(--on-oxblood) 60%, transparent); transition: color .15s ease, background-color .15s ease; }
+  .lightbox.is-subtle .step:is(:hover, :focus-visible) { background: color-mix(in srgb, var(--on-oxblood) 12%, transparent); color: var(--on-oxblood); }
   /* An end of the group keeps its empty place, so the content doesn't shift. */
   .step.is-empty { visibility: hidden; }
   .lightbox :global(.lightbox-count) { margin: 0; font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--on-oxblood); }
@@ -134,7 +169,8 @@ const hasSteps = total > 1;
   }
   /* Phones: the steps in a bar under the content, at its two ends. */
   @media (max-width: 640px) {
-    .lightbox { max-height: calc(100dvh - 2 * var(--space-4)); }
+    .lightbox { --room-h: max(40dvh, calc(100dvh - 2 * var(--space-4) - (48px + var(--space-3)) - var(--lightbox-rest, var(--space-16)))); max-height: calc(100dvh - 2 * var(--space-4)); }
+    .lightbox.has-steps { --room-h: max(40dvh, calc(100dvh - 2 * var(--space-4) - 2 * (48px + var(--space-3)) - var(--lightbox-rest, var(--space-16)))); }
     .lightbox.has-steps:popover-open { grid-template-areas: 'bar' 'main' 'steps'; }
     .lightbox-steps { grid-area: steps; display: flex; justify-content: space-between; }
   }

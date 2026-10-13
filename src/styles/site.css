@@ -67,11 +67,11 @@ img, video { max-width: 100%; height: auto; }
    keyboard focus. Put the class on the link or button that holds the photo; anything inside it that must stay
    above the wash (a play mark) needs z-index: 1. */
 .photo-wash { position: relative; }
-.photo-wash img { filter: saturate(.85); transition: transform .3s ease, filter .3s ease; }
+.photo-wash :is(img, video) { filter: saturate(.85); transition: transform .3s ease, filter .3s ease; }
 .photo-wash::after { content: ''; position: absolute; inset: 0; background: var(--paper); opacity: .22; pointer-events: none; transition: opacity .3s ease; }
 .photo-wash:is(:hover, :focus-visible)::after { opacity: 0; }
-.photo-wash:is(:hover, :focus-visible) img { filter: none; }
-@media (prefers-reduced-motion: reduce) { .photo-wash img, .photo-wash::after { transition: none; } }
+.photo-wash:is(:hover, :focus-visible) :is(img, video) { filter: none; }
+@media (prefers-reduced-motion: reduce) { .photo-wash :is(img, video), .photo-wash::after { transition: none; } }
 
 /* The footer's bottom row: the legal line at the left, the site's credit at the right (stacked on narrow screens). */
 .cg-foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--space-1) var(--space-6); margin-top: var(--space-3); }

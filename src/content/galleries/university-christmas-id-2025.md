@@ -13,4 +13,7 @@ images:
     alt: "A Christmas shoot set up under studio lights, the group posing in Santa hats."
   - src: ../../assets/works/documentation/university-productions/university-christmas-id-2025/04.jpg
     alt: "Crew in Santa hats at work around a long table."
+  - src: ../../assets/works/documentation/university-productions/university-christmas-id-2025/video.jpg
+    video: ../../assets/works/documentation/university-productions/university-christmas-id-2025/video.mp4
+    alt: "A short video of a crew member cutting out paper stars for the Christmas ID and holding them up to the camera."
 ---

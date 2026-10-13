@@ -25,4 +25,7 @@ images:
     alt: "The crew posing on the red carpet at the awards night."
   - src: ../../assets/works/documentation/university-productions/employees-awards-night/10.jpg
     alt: "The crew posing on the red carpet at the awards night, another take."
+  - src: ../../assets/works/documentation/university-productions/employees-awards-night/video.jpg
+    video: ../../assets/works/documentation/university-productions/employees-awards-night/video.mp4
+    alt: "A short video of the crew in headsets at the production desk in the ballroom, laughing during the awards night."
 ---

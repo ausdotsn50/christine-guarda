@@ -14,7 +14,7 @@ A static Astro site for the portfolio of Christine Guarda (AB Communication, UST
 - Astro, static output. No UI framework. Client JavaScript only where a feature needs it: the Lightbox's previous / next, the picture strips' chevrons, and loading a video player in place.
 - Fonts self-hosted with Fontsource: Playfair Display (variable, roman and italic), Old Standard TT (400, 400 italic, 700) and Rochester (the script on About and Contact).
 - Layout: `src/layouts/Base.astro` = SiteMenu (under 900px) or Masthead (with the Works drop-down) + `<main>` + ContactFooter, with `<title>` ("Page | Christine Guarda"), meta description and Open Graph tags per page.
-- Images through `astro:assets` from `src/assets/`, at most 2400px on the long side (JPEG quality 90; PNG only where transparency is needed). Videos are embedded from Google Drive or YouTube (`src/lib/media.ts`); audio, scripts, magazines and presentations stay as links. The resume is `public/christine-guarda-resume.pdf`.
+- Images through `astro:assets` from `src/assets/`, at most 2400px on the long side (JPEG quality 90; PNG only where transparency is needed). Works' videos are embedded from Google Drive or YouTube (`src/lib/media.ts`); Documentation's short clips are muted MP4s (no sound track) beside their event's photos, with a poster frame. Audio, scripts, magazines and presentations stay as links. The resume is `public/christine-guarda-resume.pdf`.
 
 ## Content
 
@@ -22,7 +22,7 @@ Content collections in `src/content/`, typed in `src/content.config.ts`:
 
 - `works/<category>/<slug>.md`: one per Academic work. `category` is film-video, radio-broadcast, editorial-publishing, scripts-stage, campaigns-advertising-pr or visual-brand-design. Optional: `kicker`, `medium`, `roles`, `course`, `format`, `year` (only what Christine's text states), `award`, `featured` (1–3, its place on the front page), `order`, `video`, `audio`, `scripts`, `poster`, `gallery`, `image`, `links`. The body is her description, word for word.
 - `essays`: `title`, `group` (long or short), `kicker`, `pullQuote`, `order`; optional `year`, `context`. The body is the essay.
-- `galleries`: Digital Art series (`group: digital-art`) and Documentation events (`group: documentation`, with `section`), each with `images` (`src`, `alt`, optional `title`, `caption`).
+- `galleries`: Digital Art series (`group: digital-art`) and Documentation events (`group: documentation`, with `section`), each with `images` (`src`, `alt`, optional `title`, `caption`, and `video` for a clip, `src` then being its poster frame).
 
 Section lists, counts, card images (a work's video still, its own picture or its category's drawing) and tab strips are computed from the collections and `src/data/`, never hand-written.
 

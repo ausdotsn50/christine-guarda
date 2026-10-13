@@ -7,7 +7,7 @@ import Band from '../../../components/site/Band.astro';
 import PlateShelf from '../../../components/site/PlateShelf.astro';
 import SectionFlag from '../../../components/site/SectionFlag.astro';
 import { documentationPages, documentationSections, workGroups } from '../../../data/categories';
-import { countLabel, documentationEvents, platesOf, type PlateItem } from '../../../lib/collections';
+import { countLabel, documentationEvents, photoCount, platesOf, type PlateItem } from '../../../lib/collections';
 
 const group = workGroups.documentation;
 const sections = await Promise.all(documentationSections.map(async (s) => {
@@ -18,7 +18,7 @@ const sections = await Promise.all(documentationSections.map(async (s) => {
   for (let i = 0; preview.length < 4 && i < Math.max(0, ...events.map((e) => e.length)); i++) {
     for (const e of events) if (e[i] && preview.length < 4) preview.push(e[i]);
   }
-  const meta = [events.length > 1 && countLabel(events.length, 'event'), countLabel(photos.length, 'photo')].filter(Boolean).join(' - ');
+  const meta = [events.length > 1 && countLabel(events.length, 'event'), photoCount(photos)].filter(Boolean).join(' - ');
   return { ...s, preview, meta };
 }));
 ---

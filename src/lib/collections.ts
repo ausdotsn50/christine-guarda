@@ -39,11 +39,36 @@ export function countLabel(n: number, noun: string, plural = `${noun}s`): string
   return `${n} ${n === 1 ? noun : plural}`;
 }
 
-/** A gallery's pieces as plates (a Digital Art series' artworks, a Documentation event's photos), numbered within
- *  the gallery, with ids unique on the page. */
+// The galleries' video clips (MP4s beside their photos), as the addresses the build serves them at.
+const videoFiles = import.meta.glob<string>('/src/assets/**/*.mp4', { query: '?url', import: 'default', eager: true });
+
+/** A gallery's `video` path (relative to its file, like an image's) as the clip's address. */
+function videoUrl(series: Gallery, path: string): string {
+  const file = new URL(path, `file:///${series.filePath}`).pathname;
+  const url = videoFiles[file];
+  if (!url) throw new Error(`${series.filePath}: no video at ${path}`);
+  return url;
+}
+
+/** A gallery's pieces as plates (a Digital Art series' artworks, a Documentation event's photos and clips), with ids
+ *  unique on the page. Photos and clips are numbered apart: Photo 1, Photo 2… Video 1. */
 export function platesOf(series: Gallery) {
   const { title, year, images } = series.data;
-  return images.map((img, i) => ({ ...img, id: `plate-${series.id}-${i + 1}`, number: i + 1, series: title, year }));
+  const count = { photo: 0, video: 0 };
+  return images.map((img, i) => ({
+    ...img,
+    video: img.video && videoUrl(series, img.video),
+    id: `plate-${series.id}-${i + 1}`,
+    number: img.video ? ++count.video : ++count.photo,
+    series: title,
+    year,
+  }));
+}
+
+/** "10 photos", or "10 photos - 1 video" where there are clips too. */
+export function photoCount(plates: { video?: string }[]): string {
+  const videos = plates.filter((p) => p.video).length;
+  return [countLabel(plates.length - videos, 'photo'), videos > 0 && countLabel(videos, 'video')].filter(Boolean).join(' - ');
 }
 
 /** One gallery piece as a plate (see platesOf), and its kind: a Digital Art piece or a Documentation photo. */
