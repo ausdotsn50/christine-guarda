@@ -20,7 +20,7 @@ A static Astro site for the portfolio of Christine Guarda (AB Communication, UST
 
 Content collections in `src/content/`, typed in `src/content.config.ts`:
 
-- `works/<category>/<slug>.md`: one per Academic work. `category` is film-video, radio-broadcast, editorial-publishing, scripts-stage, campaigns-advertising-pr or visual-brand-design. Optional: `kicker`, `medium`, `roles`, `course`, `format`, `year` (only what Christine's text states), `award`, `featured` (1–3, its place on the front page), `order`, `video`, `audio`, `scripts`, `poster`, `gallery`, `image`, `links`. The body is her description, word for word.
+- `works/<category>/<slug>.md`: one per Academic work. `category` is film-video, radio-broadcast, editorial-publishing, scripts-stage, campaigns-advertising-pr or visual-brand-design. Optional: `kicker`, `medium`, `roles`, `course`, `format`, `year` (only what Christine's text states), `award`, `featured` (1–3, its place on the front page), `order`, `video`, `audio`, `scripts`, `excerpts` (images of script pages), `poster`, `gallery`, `image`, `links`. The body is her description, word for word.
 - `essays`: `title`, `group` (long or short), `kicker`, `pullQuote`, `order`; optional `year`, `context`. The body is the essay.
 - `galleries`: Digital Art series (`group: digital-art`) and Documentation events (`group: documentation`, with `section`), each with `images` (`src`, `alt`, optional `title`, `caption`, and `video` for a clip, `src` then being its poster frame).
 

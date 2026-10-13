@@ -51,6 +51,9 @@ const works = defineCollection({
       gallery: z
         .array(z.object({ src: image(), alt: z.string(), caption: z.string().optional(), animation: image().optional() }))
         .default([]),
+      /** Excerpts from its scripts (Christine's screenshots of a page), shown under its video; a label tells several
+       *  apart, as on its scripts ("S2, EP8"). */
+      excerpts: z.array(z.object({ src: image(), alt: z.string(), label: z.string().optional() })).default([]),
       /** The poster, opened in a Lightbox from a pill. */
       poster: z.object({ src: image(), alt: z.string(), credit: z.string().optional() }).optional(),
       /** Other links (the full magazine, an article, a presentation), as pills that open in a new tab. */

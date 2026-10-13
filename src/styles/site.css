@@ -1,5 +1,9 @@
 /* Site layout around the cg-* components. Tokens only. */
 
+/* Site addition to the tokens: the plain white of Christine's script pages (screenshots), so a sheet behind one
+   blends with it. */
+:root { --sheet: #ffffff; }
+
 img, video { max-width: 100%; height: auto; }
 
 /* Ionicons, inlined by src/lib/icons.ts: the classes their SVGs carry, as the ion-icon element styles them. */

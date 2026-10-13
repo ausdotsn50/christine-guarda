@@ -1,0 +1,33 @@
+---
+// A work's script excerpts (see `excerpts` in the works schema), under its video, headed "Script excerpt": each a
+// screenshot of a page of the script as Christine wrote it, on a white sheet as wide as the column and ruled in blue.
+// The screenshot sits centred on it at its own size (never enlarged, so the type stays sharp), its white blending
+// into the sheet's, so narrow and wide pages alike read as one full-width page. Several are told apart by labels.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  excerpts: { src: ImageMetadata; alt: string; label?: string }[];
+}
+
+const { excerpts } = Astro.props;
+---
+<section class="excerpt">
+  <h3 class="excerpt-label">{excerpts.length > 1 ? 'Script excerpts' : 'Script excerpt'}</h3>
+  {excerpts.map((x) => (
+    <figure class="excerpt-sheet">
+      <Image src={x.src} alt={x.alt} widths={[x.src.width]} sizes={`(max-width: 900px) calc(100vw - 32px), ${x.src.width}px`} />
+      {x.label && <figcaption>{x.label}</figcaption>}
+    </figure>
+  ))}
+</section>
+
+<style>
+  .excerpt { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-2); }
+  .excerpt-label { margin: 0; font-family: var(--font-text); font-weight: 700; font-size: 13px; line-height: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--press-blue-deep); }
+  .excerpt-sheet { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); margin: 0; padding: var(--space-8) var(--space-6); border: var(--stroke-hair) solid var(--rule); background: var(--sheet); }
+  .excerpt-sheet :global(img) { display: block; max-width: 100%; height: auto; }
+  .excerpt-sheet figcaption { font-family: var(--font-text); font-style: italic; font-size: 15px; line-height: 22px; color: var(--oxblood); }
+  /* Phones: the pages fill the width anyway; a slim margin keeps their small type as large as it can be. */
+  @media (max-width: 640px) { .excerpt-sheet { padding: var(--space-3) var(--space-2); } }
+</style>

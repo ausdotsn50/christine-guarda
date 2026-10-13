@@ -1,15 +1,18 @@
 ---
 // A work's set of pictures (pubmats, print ads, slides: Campaigns and Visual & Brand Design). Several sit in a strip at
 // one height, each at its own shape, that scrolls sideways (swipe, trackpad, the arrow keys once it has focus, or the
-// chevrons); the next one peeks in at the edge to show there's more. A single picture sits alone at the column's
-// width. Pressing a picture opens it whole in a Lightbox, on its own: the strip's chevrons do the stepping, so the
-// zoomed view has none (unlike Digital Art's and Documentation's grids). A picture with an animation shows its still,
+// chevrons); the next one peeks in at the edge to show there's more. A single wide picture sits alone at the column's
+// width; a single tall one (a magazine cover) at the strip's height, so it isn't a page tall. A strip too short to
+// reach across the column (one or two pages) stretches its pictures to fill it at the same height, cropped from the top
+// down so their titles stay; the Lightbox shows each whole. Pressing a picture opens it whole in a Lightbox that steps through the set ("3 of 6"), its chevrons bare and
+// dimmed so they don't echo the strip's boxed ones. A picture with an animation shows its still,
 // marked "Animated", and plays the animation when opened (the still again, where motion is reduced): a loop that
 // starts on its own would need a way to pause it.
 import { getImage, Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Lightbox from './Lightbox.astro';
 import { icon } from '../../lib/icons';
+import { inSequence } from '../../lib/collections';
 
 interface Props {
   /** The work's id, for the previews' ids. */
@@ -19,27 +22,26 @@ interface Props {
 }
 
 const { id, title, images } = Astro.props;
-const pieces = await Promise.all(images.map(async (img, i) => ({
+const pieces = inSequence(await Promise.all(images.map(async (img, i) => ({
   ...img,
   id: `${id}-picture-${i + 1}`,
-  position: i + 1,
-  total: images.length,
   // An animation is served at one size (re-encoding every frame per width is slow), with its still beside it.
   playing: img.animation && {
     animation: await getImage({ src: img.animation, width: Math.min(1280, img.animation.width), format: 'webp' }),
     still: await getImage({ src: img.src, width: Math.min(1600, img.src.width), format: 'webp' }),
   },
-})));
+}))));
 const play = icon('play', { size: 14 });
 const single = pieces.length === 1;
+const wide = single && pieces[0].src.width >= pieces[0].src.height;
 const back = icon('chevronBackOutline', { size: 26 });
 const forward = icon('chevronForwardOutline', { size: 26 });
 ---
-<div class:list={['gallery', single && 'is-single']}>
+<div class:list={['gallery', wide && 'is-single']}>
   <div class="gallery-track" {...(single ? {} : { tabindex: '0', role: 'group', 'aria-label': `${title}: ${pieces.length} pictures, scrolling sideways` })}>
     {pieces.map((p) => (
       <button class="gallery-item" type="button" popovertarget={p.id}>
-        <Image src={p.src} alt={p.alt} widths={[480, 960, 1440]} sizes={single ? '(max-width: 900px) calc(100vw - 32px), 820px' : '(max-width: 640px) 80vw, 720px'} />
+        <Image src={p.src} alt={p.alt} widths={[480, 960, 1440]} sizes={wide ? '(max-width: 900px) calc(100vw - 32px), 820px' : '(max-width: 640px) 80vw, 720px'} />
         {p.playing
           ? <span class="gallery-badge"><span class="gallery-badge-icon" set:html={play} />Animated<span class="cg-sr"> (open to play)</span></span>
           : <span class="cg-sr">(view larger)</span>}
@@ -54,16 +56,19 @@ const forward = icon('chevronForwardOutline', { size: 26 });
   )}
 </div>
 {pieces.map((p) => (
-  <Lightbox id={p.id} label={`${title}, picture ${p.position} of ${p.total}`} class="lightbox-gallery">
+  <Lightbox id={p.id} label={`${title}, picture ${p.position} of ${p.total}`} prev={p.prev} next={p.next} total={p.total} thing="picture" subtle class="lightbox-gallery">
     {p.playing
       ? (
         <picture>
           <source media="(prefers-reduced-motion: reduce)" srcset={p.playing.still.src} />
-          <img class="gallery-large" src={p.playing.animation.src} width={p.playing.animation.attributes.width} height={p.playing.animation.attributes.height} alt={p.alt} loading="lazy" decoding="async" draggable="false" />
+          <img class="gallery-large" src={p.playing.animation.src} width={p.playing.animation.attributes.width} height={p.playing.animation.attributes.height} alt={p.alt} loading="lazy" decoding="async" draggable="false" data-fit />
         </picture>
       )
-      : <Image class="gallery-large" src={p.src} alt={p.alt} widths={[800, 1200, 1600, 2000]} sizes="min(100vw, 100vh)" loading="lazy" draggable="false" />}
-    <p class="gallery-caption"><cite>{title}</cite>{p.caption && <Fragment>. {p.caption}</Fragment>}</p>
+      : <Image class="gallery-large" src={p.src} alt={p.alt} widths={[800, 1200, 1600, 2000]} sizes="min(100vw, 100vh)" loading="lazy" draggable="false" data-fit />}
+    <div class="gallery-caption">
+      {p.total > 1 && <span class="lightbox-count">{p.position} of {p.total}</span>}
+      <span><cite>{title}</cite>{p.caption && <Fragment>. {p.caption}</Fragment>}</span>
+    </div>
   </Lightbox>
 ))}
 
@@ -100,8 +105,10 @@ const forward = icon('chevronForwardOutline', { size: 26 });
   /* The strip: no scrollbar (the peek and the chevrons show it scrolls); each picture snaps to its left edge. */
   .gallery-track { display: flex; gap: var(--space-4); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .gallery-track::-webkit-scrollbar { display: none; }
-  .gallery-item { position: relative; flex: none; box-sizing: border-box; height: var(--gallery-h); padding: 0; overflow: hidden; border: var(--stroke-hair) solid var(--rule); border-radius: var(--radius-none); background: var(--paper); scroll-snap-align: start; cursor: zoom-in; }
-  .gallery-item :global(img) { display: block; width: auto; height: 100%; transition: transform .3s ease; }
+  .gallery-item { position: relative; flex: 1 0 auto; box-sizing: border-box; height: var(--gallery-h); padding: 0; overflow: hidden; border: var(--stroke-hair) solid var(--rule); border-radius: var(--radius-none); background: var(--paper); scroll-snap-align: start; cursor: zoom-in; }
+  /* Each picture at the strip's height and its own width; where the strip is short, its item grows (above) and the
+     picture covers it, kept to its top. */
+  .gallery-item :global(img) { display: block; width: auto; min-width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; transition: transform .3s ease; }
   .gallery-item:is(:hover, :focus-visible) :global(img) { transform: scale(1.03); }
   /* A picture with an animation: a mark in its corner. */
   .gallery-badge { position: absolute; left: var(--space-2); bottom: var(--space-2); display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2); background: var(--oxblood); color: var(--on-oxblood); font-family: var(--font-text); font-weight: 700; font-size: 12px; line-height: 18px; letter-spacing: .12em; text-transform: uppercase; }
@@ -126,17 +133,20 @@ const forward = icon('chevronForwardOutline', { size: 26 });
   /* Narrower screens, where the chevrons sit over the pictures: the one at its end of the strip goes. */
   @media (max-width: 1099px) { .gallery-step[aria-disabled='true'] { visibility: hidden; } }
 
-  /* In the preview: the whole picture, on paper, as large as the screen allows under the × and above its caption.
-     (Global: the image is the Image component's, outside this component's scope.) */
-  :global(img.gallery-large) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8)); max-height: calc(100dvh - 2 * var(--space-8) - (48px + var(--space-3)) - var(--space-16)); background: var(--paper); }
+  /* In the preview: the whole picture, on paper, as large as the screen allows under the ×, above its caption (its
+     height measured by the Lightbox) and, on wider screens with several pictures, between the chevrons. A sideways
+     swipe steps (see Lightbox); pinching zooms. (Global: the image is the Image component's, outside this
+     component's scope.) */
+  :global(img.gallery-large) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8)); max-height: var(--room-h); background: var(--paper); touch-action: pan-y pinch-zoom; }
+  :global(.lightbox-gallery.has-steps img.gallery-large) { max-width: calc(100vw - 2 * var(--space-8) - 2 * (48px + var(--space-4))); }
   /* The caption wraps to the picture's width (its own width doesn't size the preview), so the × and the chevrons
      stay at the picture's edges. */
-  .gallery-caption { contain: inline-size; box-sizing: border-box; width: 100%; margin: 0; font-family: var(--font-text); font-size: 16px; line-height: 24px; text-align: center; color: var(--on-oxblood); }
+  .gallery-caption { contain: inline-size; box-sizing: border-box; width: 100%; min-width: min(18em, 100vw - 2 * var(--page-margin-sm)); display: flex; flex-direction: column; align-items: center; gap: var(--space-1); font-family: var(--font-text); font-size: 16px; line-height: 24px; text-align: center; color: var(--on-oxblood); }
 
   @media (max-width: 900px) { .gallery { --gallery-h: 340px; } }
   @media (max-width: 640px) {
     .gallery { --gallery-h: 280px; }
-    :global(img.gallery-large) { max-width: calc(100vw - 2 * var(--page-margin-sm)); max-height: calc(100dvh - 2 * var(--space-4) - (48px + var(--space-3)) - var(--space-16)); }
+    :global(img.gallery-large), :global(.lightbox-gallery.has-steps img.gallery-large) { max-width: calc(100vw - 2 * var(--page-margin-sm)); }
   }
   @media (prefers-reduced-motion: reduce) { .gallery-item :global(img), .gallery-step { transition: none; } }
 </style>

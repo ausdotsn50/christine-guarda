@@ -20,7 +20,7 @@ const works = await getWorks(category);
   <SectionFlag group={workGroups.academic} pages={academicPages} current={href} />
 
   <div class="entries">
-    {works.map((w) => <WorkEntry work={w} />)}
+    {works.map((w) => <WorkEntry work={w} mediaFirst={category === 'film-video'} />)}
     {works.length === 0 && <p class="empty">Works coming soon.</p>}
   </div>
 

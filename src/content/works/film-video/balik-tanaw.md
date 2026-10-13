@@ -11,5 +11,8 @@ video:
   alt: A still from Balik-Tanaw, a woman in a denim jacket talking with a young man over a meal on a veranda, mountains behind them.
 scripts:
   - href: https://drive.google.com/file/d/1Bd3fBr0bz_hqmNQE2TiYCJE9c4ZVPc39/view
+excerpts:
+  - src: ../../../assets/works/academic/film-video/balik-tanaw/script-excerpt.jpg
+    alt: "An excerpt from the Balik-Tanaw screenplay: over a meal, Dan silences his phone, full of missed calls from his mother, as Thea plans their next stop; at Farmplate she films a vlog while Dan feels he has been there before, and she asks to interview him."
 ---
 A short film exploring family, revisiting the past, and reconnecting with culture and identity. Produced as a final requirement for “Introduction to Film”, with me serving as Head Writer and Assistant Director.

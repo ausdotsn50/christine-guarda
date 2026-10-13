@@ -1,16 +1,18 @@
 ---
 // One Academic work on its category page, as a story in one column, the same for every work: a kicker (its medium,
 // its award), its title in italics, Christine's description, then its video in a 16:9 frame or its set of pictures in a
-// sideways strip (WorkGallery), and its other materials
-// as pills on the right (its audio, scripts and other links, opening in a new tab; its poster, in a Lightbox). A work
-// with a picture of its own and no video shows that in the frame instead.
+// sideways strip (WorkGallery), its script excerpts where it has them (ScriptExcerpt), and its other materials as
+// underlined arrow links on the right, one per line on tablets and phones (its audio, scripts and other links,
+// opening in a new tab; its poster, in a Lightbox). A work with a picture of its own and no video shows that in the
+// frame instead. With `mediaFirst` (Film & Video), the video leads, above the kicker and title, like a photo over a
+// story.
 // The still shows in full colour (the photo wash is for cards). The video plays in place: its still links to it on
 // Drive (so it works without JavaScript); with the script below,
 // pressing it loads the player in the frame instead, and starting one video stops any other.
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
-import Button from '../Button.astro';
 import Lightbox from './Lightbox.astro';
+import ScriptExcerpt from './ScriptExcerpt.astro';
 import WorkGallery from './WorkGallery.astro';
 import { icon } from '../../lib/icons';
 import { embedUrl } from '../../lib/media';
@@ -18,19 +20,21 @@ import type { Work } from '../../lib/collections';
 
 interface Props {
   work: Work;
+  /** Set the video above the title. */
+  mediaFirst?: boolean;
 }
 
-const { work } = Astro.props;
-const { title, medium, year, award, video, audio, scripts, poster, image, gallery, links } = work.data;
+const { work, mediaFirst = false } = Astro.props;
+const { title, medium, year, award, video, audio, scripts, excerpts, poster, image, gallery, links } = work.data;
 const { Content } = await render(work);
 const posterId = `poster-${work.id}`;
 const kicker = [medium, year, award?.level].filter(Boolean).join(' - ');
 const external = (href: string) => /^https?:/.test(href);
 const play = icon('play', { size: 30 });
 const arrow = icon('arrowForwardOutline', { size: 16 });
-const hasPills = Boolean(audio || scripts.length || poster || links.length);
+const hasLinks = Boolean(audio || scripts.length || poster || links.length);
 ---
-<article class="entry" id={work.id}>
+<article class:list={['entry', mediaFirst && 'is-media-first']} id={work.id}>
   <header class="entry-head">
     {kicker && <p class="entry-kicker">{kicker}</p>}
     <h2 class="entry-title">{title}</h2>
@@ -51,23 +55,25 @@ const hasPills = Boolean(audio || scripts.length || poster || links.length);
     <div class="entry-video is-image"><Image src={image.src} alt={image.alt} widths={[600, 900, 1300]} sizes="(max-width: 900px) calc(100vw - 32px), 820px" /></div>
   )}
 
-  {hasPills && (
-    <div class="entry-pills">
-      {audio && <Button variant="outline" size="sm" href={audio.href} target="_blank" rel="noopener">Listen to Full Audio<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>}
+  {excerpts.length > 0 && <ScriptExcerpt excerpts={excerpts} />}
+
+  {hasLinks && (
+    <div class="entry-links">
+      {audio && <a class="entry-link" href={audio.href} target="_blank" rel="noopener">Listen to Full Audio<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-link-icon" set:html={arrow} /></a>}
       {scripts.map((s) => (
-        <Button variant="outline" size="sm" href={s.href} target="_blank" rel="noopener">Read Script{s.label && `: ${s.label}`}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>
+        <a class="entry-link" href={s.href} target="_blank" rel="noopener">Read Script{s.label && `: ${s.label}`}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-link-icon" set:html={arrow} /></a>
       ))}
-      {poster && <Button variant="outline" size="sm" popovertarget={posterId}>View Poster<span class="cg-sr">{` of ${title}`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>}
+      {poster && <button class="entry-link" type="button" popovertarget={posterId}>View Poster<span class="cg-sr">{` of ${title}`}</span><span class="entry-link-icon" set:html={arrow} /></button>}
       {links.map((l) => external(l.href)
-        ? <Button variant="outline" size="sm" href={l.href} target="_blank" rel="noopener">{l.label}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-pill-icon" set:html={arrow} /></Button>
-        : <Button variant="outline" size="sm" href={l.href}>{l.label}<span class="entry-pill-icon" set:html={arrow} /></Button>)}
+        ? <a class="entry-link" href={l.href} target="_blank" rel="noopener">{l.label}<span class="cg-sr">{` of ${title} (opens in a new tab)`}</span><span class="entry-link-icon" set:html={arrow} /></a>
+        : <a class="entry-link" href={l.href}>{l.label}<span class="entry-link-icon" set:html={arrow} /></a>)}
     </div>
   )}
 
   {poster && (
     <Lightbox id={posterId} label={`${title}, poster`} class="lightbox-poster">
       <figure class="entry-poster">
-        <Image src={poster.src} alt={poster.alt} widths={[600, 900, 1300]} sizes="min(100vw, 66vh)" loading="lazy" />
+        <Image src={poster.src} alt={poster.alt} widths={[600, 900, 1300]} sizes="min(100vw, 66vh)" loading="lazy" data-fit />
         <figcaption><cite>{title}</cite>{poster.credit && <Fragment> - {poster.credit}</Fragment>}</figcaption>
       </figure>
     </Lightbox>
@@ -111,6 +117,9 @@ const hasPills = Boolean(audio || scripts.length || poster || links.length);
   /* The video: a 16:9 frame (letterboxed films keep their bars), its still a link that plays it in place. */
   .entry-video { position: relative; margin-top: var(--space-2); aspect-ratio: 16 / 9; overflow: hidden; background: #000; border: var(--stroke-hair) solid var(--rule); }
   .entry-video.is-image { background: var(--press-blue); }
+  /* Video first: drawn above the title (the title stays first in the reading order; the still is still the first
+     thing to tab to), with room before the kicker. */
+  .entry.is-media-first .entry-video { order: -1; margin: 0 0 var(--space-2); }
   .entry-video :global(img) { display: block; width: 100%; height: 100%; object-fit: contain; }
   .entry-video.is-image :global(img) { object-fit: cover; }
   .entry-video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -121,14 +130,19 @@ const hasPills = Boolean(audio || scripts.length || poster || links.length);
   .entry-play { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 72px; height: 72px; margin: -36px 0 0 -36px; border: var(--stroke) solid var(--on-oxblood); background: var(--oxblood); color: var(--on-oxblood); transition: background-color .15s ease; }
   .entry-still:is(:hover, :focus-visible) .entry-play { background: color-mix(in srgb, var(--oxblood), black 25%); }
 
-  /* The other materials: small pills under the video, at its right, each with an arrow that nudges on hover. */
-  .entry-pills { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
-  .entry-pill-icon { display: inline-flex; transition: transform .15s ease; }
-  .entry-pills :global(.cg-btn:is(:hover, :focus-visible)) .entry-pill-icon { transform: translateX(4px); }
+  /* The other materials: underlined links under the video, at its right, each with an arrow that nudges on hover. No
+     border: they read as links, beside the pictures and the play button. */
+  .entry-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-1) var(--space-8); }
+  .entry-link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 34px; padding: 0; border: 0; background: none; font-family: var(--font-text); font-weight: 700; font-size: 16px; line-height: 22px; color: var(--press-blue-deep); text-decoration: underline; text-decoration-thickness: var(--stroke-hair); text-underline-offset: 5px; cursor: pointer; }
+  .entry-link:hover { text-decoration-thickness: var(--stroke); }
+  .entry-link-icon { display: inline-flex; transition: transform .15s ease; }
+  .entry-link:is(:hover, :focus-visible) .entry-link-icon { transform: translateX(4px); }
+  /* Tablets and phones: one link per line, still at the right. */
+  @media (max-width: 900px) { .entry-links { flex-direction: column; align-items: flex-end; gap: var(--space-1); } }
 
   /* A poster in its preview: whole, as tall as the screen allows. */
   .entry-poster { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
-  .entry-poster :global(img) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8)); max-height: calc(100dvh - 2 * var(--space-8) - 48px - var(--space-3) - var(--space-12)); }
+  .entry-poster :global(img) { display: block; width: auto; height: auto; max-width: calc(100vw - 2 * var(--space-8)); max-height: var(--room-h); }
   .entry-poster figcaption { font-family: var(--font-text); font-size: 16px; line-height: 24px; color: var(--on-oxblood); }
 
   @media (max-width: 640px) {
@@ -136,6 +150,6 @@ const hasPills = Boolean(audio || scripts.length || poster || links.length);
     .entry-poster :global(img) { max-width: calc(100vw - 2 * var(--page-margin-sm)); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .entry-still :global(img), .entry-play, .entry-pill-icon { transition: none; }
+    .entry-still :global(img), .entry-play, .entry-link-icon { transition: none; }
   }
 </style>
