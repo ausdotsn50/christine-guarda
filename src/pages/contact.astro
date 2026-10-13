@@ -2,9 +2,9 @@
 // Contact: one headline, one line and the two things to do next (her resume, her works); the footer below carries the
 // emails, phone and social links, so the page doesn't repeat them.
 // The headline is a sticker laid over the cutout portrait: "Let's" in the Rochester script, tilted, over a huge italic
-// "CONNECT!", both whole and in front of her (the two share one grid cell, the title on top). Each is edged in paper so
-// it reads where it crosses her: "Let's" thickly, like a cut-out, and the capitals in a thin line that scales with
-// them (4px on desktop, 2px on phones), which only shows over the photo (paper on paper is invisible).
+// "CONNECT!", both whole and in front of her (the two share one grid cell, the title on top). Both are edged in the
+// same thin paper line, so they read where they cross her: it scales with the capitals (4px on desktop, 2px on
+// phones) and only shows over the photo (paper on paper is invisible).
 import '@fontsource/rochester/latin-400.css';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
@@ -37,13 +37,12 @@ import portrait from '../assets/christine/contact.png';
   .contact-portrait { width: min(100%, 380px); }
   .contact-portrait :global(img) { display: block; width: 100%; height: auto; }
 
-  .contact-title { align-self: end; display: flex; flex-direction: column; align-items: center; margin: 0; padding-bottom: var(--space-16); pointer-events: none; }
+  .contact-title { --word-size: clamp(44px, 15.5cqi, 184px); --outline: max(var(--stroke), calc(var(--word-size) * .022)); align-self: end; display: flex; flex-direction: column; align-items: center; margin: 0; padding-bottom: var(--space-16); pointer-events: none; }
   /* "Let's": the script, tilted, tucked over the capitals' top-left. */
   .contact-lets { align-self: flex-start; margin: 0 0 -0.32em 8%; font-family: 'Rochester', var(--font-display); font-weight: 400; font-size: clamp(56px, 10cqi, 128px); line-height: 1; color: var(--oxblood); transform: rotate(-8deg); transform-origin: left bottom; }
-  .contact-lets, .contact-word { paint-order: stroke fill; }
-  .contact-lets { -webkit-text-stroke: .12em var(--paper); }
+  .contact-lets, .contact-word { paint-order: stroke fill; -webkit-text-stroke: var(--outline) var(--paper); }
   /* "CONNECT!": the capitals, as wide as the stage allows. */
-  .contact-word { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: clamp(44px, 15.5cqi, 184px); line-height: .9; letter-spacing: -.01em; text-transform: uppercase; color: var(--press-blue); -webkit-text-stroke: max(var(--stroke), .022em) var(--paper); }
+  .contact-word { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: var(--word-size); line-height: .9; letter-spacing: -.01em; text-transform: uppercase; color: var(--press-blue); }
 
   .contact-dek { margin: 0; max-width: var(--measure); font-family: var(--font-text); font-style: italic; font-size: 20px; line-height: 30px; color: var(--oxblood); }
   .contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4); }
