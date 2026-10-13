@@ -12,20 +12,18 @@ interface Props {
   linkLabel?: string;
   /** Site addition: the image is the card's one link, named by the title; no title link, no "View project". */
   mediaLink?: boolean;
-  /** Site addition: the image is a camera photo (a video still), so it takes the soft photo wash (site.css). */
-  photo?: boolean;
   class?: string;
 }
 // Slot "image": a 3:2 <img> or <Image>, ideally a blue line illustration. A halftone placeholder shows without one.
 
-const { title, medium, role, href: hrefProp, award, linkLabel, mediaLink = false, photo = false, class: className } = Astro.props;
+const { title, medium, role, href: hrefProp, award, linkLabel, mediaLink = false, class: className } = Astro.props;
 const href = hrefProp || '#';
 const meta = [medium, role].filter(Boolean).join(' | ');
 // Rendered up front so a conditionally empty image slot still falls back to the placeholder.
 const image = Astro.slots.has('image') ? (await Astro.slots.render('image')).trim() : '';
 ---
 <article class:list={['cg-work', mediaLink && 'is-media-link', className]}>
-  <a href={href} class:list={['cg-work-media', photo && 'photo-wash']} {...(mediaLink ? { 'aria-label': title } : { tabindex: '-1', 'aria-hidden': 'true' })}>{image ? <Fragment set:html={image} /> : <span class="cg-work-placeholder"></span>}</a>
+  <a href={href} class="cg-work-media" {...(mediaLink ? { 'aria-label': title } : { tabindex: '-1', 'aria-hidden': 'true' })}>{image ? <Fragment set:html={image} /> : <span class="cg-work-placeholder"></span>}</a>
   {award && <p class="cg-kicker cg-work-award">{award}</p>}
   <h3 class="cg-work-title">{mediaLink ? title : <a href={href}>{title}</a>}</h3>
   {meta && <p class="cg-work-meta">{meta}</p>}

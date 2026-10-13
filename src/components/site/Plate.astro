@@ -1,10 +1,9 @@
 ---
 // A gallery piece as a plate: a ruled tile with its caption ("Pl. 3 — Asparagus"); pressing the tile floats the
 // piece, whole and as large as the screen allows, in a Lightbox. Two kinds: art sits whole on a paper mount in a 3:4
-// tile (most pieces are drawn at 3:4, as Instagram's grid now is); a photo fills a square tile under the soft
-// photo wash (site.css), lifting on hover and focus. With its shelf's neighbours
-// (see inSequence), the preview steps to the previous / next plate and shows "3 of 7" (see Lightbox). Lay plates
-// out with PlateShelf.
+// tile (most pieces are drawn at 3:4, as Instagram's grid now is); a photo fills a square tile. With its shelf's
+// neighbours (see inSequence), the preview steps to the previous / next plate and shows "3 of 7" (see Lightbox). Lay
+// plates out with PlateShelf.
 // A photo plate can be a short clip instead ("Video 1"): it plays muted and looping in its tile while on screen,
 // over its poster frame and marked "Video", and plays larger in the preview, with controls. Where motion is
 // reduced, the tile keeps the poster and the preview waits for its play button.
@@ -47,7 +46,7 @@ const name = title ?? series;
 const source = [title && series, year].filter(Boolean).join(', ');
 ---
 <figure class:list={['plate', `is-${kind}`]}>
-  <button class:list={['plate-open', kind === 'photo' && 'photo-wash']} type="button" popovertarget={id}>
+  <button class="plate-open" type="button" popovertarget={id}>
     <Image src={src} alt={alt} widths={[300, 600]} sizes="(max-width: 640px) 50vw, (max-width: 900px) 33vw, 300px" />
     {video && <video class="plate-clip" src={video} muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" tabindex="-1" data-autoplay />}
     {video
@@ -94,17 +93,17 @@ const source = [title && series, year].filter(Boolean).join(', ');
 
 <style>
   .plate { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  /* The tile: ruled in a hairline, like a picture box on a printed page. A border, not an outline, so the picture,
-     its wash and its hover zoom all stay inside it (layers like a filter or the wash paint over an outline). */
+  /* The tile: ruled in a hairline, like a picture box on a printed page. A border, not an outline, so the picture and
+     its hover zoom stay inside it. */
   .plate-open { position: relative; box-sizing: border-box; display: block; width: 100%; padding: 0; border: var(--stroke-hair) solid var(--rule); border-radius: var(--radius-none); overflow: hidden; cursor: zoom-in; background: var(--paper); }
-  .plate-open :global(img) { display: block; width: 100%; height: 100%; transition: transform .3s ease, filter .3s ease; }
+  .plate-open :global(img) { display: block; width: 100%; height: 100%; transition: transform .3s ease; }
   .plate-open:hover :global(img) { transform: scale(1.03); }
   .is-art .plate-open { aspect-ratio: 3 / 4; }
   .is-art .plate-open :global(img) { object-fit: contain; }
   .is-photo .plate-open { aspect-ratio: 1; }
   .is-photo .plate-open :global(img) { object-fit: cover; }
   /* A clip: over its poster, shown once it plays (no black frame while it loads), marked in its corner. */
-  .plate-clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s ease, transform .3s ease, filter .3s ease; pointer-events: none; }
+  .plate-clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none; }
   .plate-clip.is-playing { opacity: 1; }
   .plate-open:hover .plate-clip { transform: scale(1.03); }
   .plate-badge { position: absolute; left: var(--space-2); bottom: var(--space-2); z-index: 1; display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2); background: var(--oxblood); color: var(--on-oxblood); font-family: var(--font-text); font-weight: 700; font-size: 12px; line-height: 18px; letter-spacing: .12em; text-transform: uppercase; }

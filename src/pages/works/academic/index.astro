@@ -23,7 +23,7 @@ const bands = categories.map((c) => ({ ...c, works: works.filter((w) => w.data.c
         ? (
           <div class="shelf is-works">
             {b.works.slice(0, 3).map((w) => (
-              <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} award={w.data.kicker} href={workHref(w)} mediaLink photo={cardImage(w)?.photo}>
+              <WorkCard title={w.data.title} medium={w.data.medium} role={w.data.roles[0]} award={w.data.kicker} href={workHref(w)} mediaLink>
                 {cardImage(w) && <Fragment slot="image"><Image src={cardImage(w)!.src} alt={cardImage(w)!.alt} widths={[400, 800]} sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 380px" /></Fragment>}
               </WorkCard>
             ))}
