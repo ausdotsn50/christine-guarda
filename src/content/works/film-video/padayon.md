@@ -11,6 +11,6 @@ video:
 poster:
   src: ../../../assets/works/academic/film-video/padayon/poster.jpg
   alt: The poster for Padayon, a student working at a desk among classmates, starring Christine Irish Joy Guarda and Karl Jester Moral.
-  credit: Poster by Emman Miranda
+  credit: Poster by Eman Miranda
 ---
 An independent short film created by a group of passionate Communication students and submitted to the ASEAN New Generation Short Film Award 2025, with me contributing to the project as an actor.
